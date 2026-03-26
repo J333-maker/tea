@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茗不虚传 - 茶产业互联网综合服务平台</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --tea-primary: #2b7a3b;
+            --tea-secondary: #4caf50;
+            --tea-dark: #1b4d24;
+            --tea-light: #e8f5e9;
+            --tea-bg: #f5f7f5;
+        }
+        
+        body {
+            background-image: linear-gradient(rgba(245, 247, 245, 0.72), rgba(245, 247, 245, 0.72)), url('../总览.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.94);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        
+        .brand-logo {
+            color: var(--tea-primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .brand-logo-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .page-surface {
+            min-height: 100vh;
+            background-color: rgba(245, 247, 245, 0.78);
+            backdrop-filter: blur(8px);
+        }
+
+        .mascot-entry {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 170px;
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .mascot-img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s ease;
+        }
+
+        .mascot-entry:hover .mascot-img {
+            transform: translateY(-2px);
+        }
+
+        .mascot-hint {
+            width: 100%;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.62);
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 999px;
+            padding: 6px 10px;
+            backdrop-filter: blur(8px);
+        }
+
+        @media (max-width: 576px) {
+            .mascot-entry {
+                width: 120px;
+                right: 12px;
+                bottom: 12px;
+            }
+        }
+
+        .ai-chat-log {
+            background: rgba(248, 249, 250, 0.8);
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            max-height: 170px;
+            overflow: auto;
+        }
+
+        .ai-bubble {
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ai-bubble.user {
+            background: rgba(43, 122, 59, 0.10);
+            border: 1px solid rgba(43, 122, 59, 0.18);
+        }
+
+        .ai-bubble.bot {
+            background: #fff;
+            border: 1px solid #eee;
+        }
+
+        .overlay-page {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: none;
+            background: rgba(247, 252, 249, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .overlay-page.is-open {
+            display: block;
+        }
+
+        .modal {
+            z-index: 3005;
+        }
+
+        .modal-backdrop {
+            z-index: 2995;
+        }
+
+        .overlay-header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.86);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .overlay-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--tea-primary);
+        }
+
+        .overlay-title-stack {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .overlay-title-sub {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.58);
+        }
+
+        .overlay-body {
+            height: calc(100vh - 58px);
+            overflow: auto;
+            padding: 18px 16px 26px;
+        }
+
+        .overlay-container {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .image-preview-viewport {
+            width: 100%;
+            height: 80vh;
+            overflow: hidden;
+            touch-action: none;
+            position: relative;
+            background: #0b0f12;
+        }
+
+        .image-preview-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+            transform-origin: 0 0;
+            will-change: transform;
+        }
+
+        .ai-chat-log {
+            max-height: 36vh;
+        }
+
+        .nav-item {
+            margin: 4px 15px;
+        }
+
+        .nav-link {
+            color: #666;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--tea-light);
+            color: var(--tea-primary);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            padding: 15px 30px;
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 20px;
+            font-weight: 700;
+            color: var(--tea-dark);
+            border-radius: 12px 12px 0 0 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Metric Cards */
+        .metric-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .bg-light-success { background-color: #e8f5e9; color: #2e7d32; }
+        .bg-light-primary { background-color: #e3f2fd; color: #1565c0; }
+        .bg-light-warning { background-color: #fff8e1; color: #f57f17; }
+        .bg-light-info { background-color: #f3e5f5; color: #6a1b9a; }
+
+        .metric-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* Table Styling */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            border-top: none;
+            color: #888;
+            font-weight: 600;
+            padding: 12px 15px;
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            color: #444;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar d-none d-md-block">
+                <div class="brand-logo">
+                    <img class="brand-logo-img" src="../logo.jpg" alt="公司Logo">
+                    <span>茗不虚传</span>
+                </div>
+                <div class="px-3 mb-3 text-muted" style="font-size: 0.8rem; font-weight: 600;">产业大脑中枢</div>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="#"><i class="fas fa-chart-pie"></i> 数据总览</a>
+                    <a class="nav-link" href="#"><i class="fas fa-seedling"></i> 数字茶园</a>
+                    <a class="nav-link" href="#"><i class="fas fa-chart-line"></i> 销售行情</a>
+                    <a class="nav-link" href="#"><i class="fas fa-industry"></i> 茶企 ERP</a>
+                    <a class="nav-link" href="#"><i class="fas fa-bullhorn"></i> 品牌服务</a>
+                    <a class="nav-link" href="#"><i class="fas fa-globe"></i> 茶碳汇管理</a>
+                    <a class="nav-link" href="#"><i class="fas fa-qrcode"></i> 智能溯源</a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 page-surface">
+                <!-- Top Navbar -->
+                <div class="top-navbar d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <a href="shop.html" class="btn btn-sm btn-outline-success rounded-pill px-3"><i class="fas fa-arrow-left me-1"></i>返回</a>
+                        <h4 class="m-0 text-dark fw-bold">数据大屏看板</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="position-relative">
+                            <i class="fas fa-bell text-muted fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.5rem; padding: 3px 5px;">
+                                3
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="cursor: pointer;">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=2b7a3b&color=fff" class="rounded-circle" width="35" height="35" alt="User">
+                            <span class="fw-medium">系统管理员 <i class="fas fa-angle-down ms-1 text-muted"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-4">
+                    <!-- Metrics Row -->
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="metric-icon-box bg-light-success me-3">
+                                        <i class="fas fa-yen-sign"></i>
+                                    </div>
+                                    <div>
+                                        <div class="metric-label">平台总销售额</div>
+                                        <h3 class="metric-value" id="totalSales">¥0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="metric-icon-box bg-light-primary me-3">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                    <div>
+                                        <div class="metric-label">累计订单总量</div>
+                                        <h3 class="metric-value" id="orderCount">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="metric-icon-box bg-light-warning me-3">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <div>
+                                        <div class="metric-label">平均客单价</div>
+                                        <h3 class="metric-value" id="avgOrderValue">¥0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="metric-icon-box bg-light-info me-3">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <div class="metric-label">活跃客户数</div>
+                                        <h3 class="metric-value" id="customerCount">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 1 -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-area text-primary"></i> 平台月度销售走势
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="monthlySalesChart" height="100"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie text-success"></i> 茶叶品类销售占比
+                                </div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 2 -->
+                    <div class="row mt-4">
+                        <div class="col-md-5">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-trophy text-warning"></i> 热销茶品排行榜 TOP 5
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="topProductsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div><i class="fas fa-list-alt text-info"></i> 实时订单监控</div>
+                                    <button class="btn btn-sm btn-outline-success">查看全部</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th>订单编号</th>
+                                                    <th>客户名称</th>
+                                                    <th>交易金额</th>
+                                                    <th>下单时间</th>
+                                                    <th>订单状态</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="recentOrdersTable">
+                                                <!-- Populated by JS -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="text-center text-muted py-4 mt-2" style="font-size: 0.9rem;">
+                        &copy; 2026 茗不虚传 - 茶产业数字化服务平台. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mascot-entry" id="aiMascotEntry" title="AI 客服 · 茶小泽">
+        <img class="mascot-img" src="../茶小泽2.png" alt="茶小泽2">
+        <div class="mascot-hint">Hi～我是茶小泽，关于安顶山茶产业的任何问题，尽管问我噢！</div>
+    </div>
+
+    <div class="overlay-page" id="aiPage" aria-hidden="true">
+        <div class="overlay-header">
+            <div class="overlay-title">
+                <img src="../茶小泽2.png" alt="茶小泽2" style="width: 34px; height: 34px; object-fit: contain; border-radius: 10px;">
+                <div class="overlay-title-stack">
+                    <div>茶小泽 · AI 客服</div>
+                    <div class="overlay-title-sub">Hi～我是茶小泽，关于安顶山茶产业的任何问题，尽管问我噢！</div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="aiPageClose">
+                <i class="fas fa-times me-1"></i>关闭
+            </button>
+        </div>
+        <div class="overlay-body">
+            <div class="overlay-container">
+                <div class="accordion mb-3" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c1">
+                                    1、安顶山景区有哪些核心游玩点位，有没有导览路线？
+                                </button>
+                            </h2>
+                            <div id="faq-c1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    核心点位有茶非遗工坊、天空之镜、云雾露营基地、星空观景点、核心茶园体验区；推荐轻量导览路线：游客中心→天空之镜打卡→核心茶园采茶体验→非遗工坊看炒茶技艺→云雾茶吧品茶，全程约2-3小时，适合休闲游览。
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill guide-map-btn" data-src="../导览.jpg" data-title="安顶山导览图">
+                                            <i class="fas fa-map-marked-alt me-1"></i>查看导览图
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c2">
+                                    2、想体验茶园采茶、非遗炒茶课程，该怎么在线预约？
+                                </button>
+                            </h2>
+                            <div id="faq-c2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    可进入安顶山茶产业综合服务平台，点击首页茶文旅板块，选择对应体验项目（采茶/炒茶/研学），选择预约日期、人数并提交，支付预约金即可完成；预约成功后会收到短信提醒，凭预约码到景区核销即可。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c3">
+                                    3、安顶云雾茶和普通绿茶有什么区别，核心特色是什么？
+                                </button>
+                            </h2>
+                            <div id="faq-c3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    安顶云雾茶是杭州十大名茶、明代贡茶，产自安顶山高山云雾小气候，水浸出物46%+、氨基酸4.1%+，远高于普通绿茶，有“七泡有余香”“晚来香”的独特品质；手工炒制技艺为杭州非遗，采用“三温三炒”古法和“十大手法”，茶汤醇厚、清热降火且不影响睡眠。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c4">
+                                    4、安顶云雾茶有哪些周边文创产品，在哪里可以购买？
+                                </button>
+                            </h2>
+                            <div id="faq-c4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    核心周边有吉祥物“茶小泽”毛绒挂件、冰箱贴、茶宠摆件，还有定制茶具套装、茶园风景手账等；可在景区游客中心、非遗工坊线下购买，也可在官方平台、抖音小店、微店线上选购，支持全国快递配送。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c5">
+                                    5、线上购买的安顶云雾茶，怎么查产品溯源信息？
+                                </button>
+                            </h2>
+                            <div id="faq-c5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    每款产品包装上均贴有专属数字溯源码，微信扫码即可查看，或登录安顶茶产业平台“茶标自助机”查询，包含茶叶的种植茶园、采摘时间、炒茶师傅、加工流程、品控检测等全链路信息，确保产品正宗。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c6">
+                                    6、景区内有没有品茶、就餐的地方，消费大概在什么水平？
+                                </button>
+                            </h2>
+                            <div id="faq-c6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    景区内有云雾茶吧、合作农家乐，茶吧可品尝不同品级的安顶云雾茶，单杯体验价20-50元，茶位费88元/位起；农家乐以本地农家菜为主，人均消费60-100元，可搭配茶点、茶叶特色菜品。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h7">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c7">
+                                    7、企业想团购安顶云雾茶做礼品，能不能定制包装，有什么合作政策？
+                                </button>
+                            </h2>
+                            <div id="faq-c7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    支持企业团购定制，可在礼盒上印制企业LOGO、专属祝福语，AI设计团队可快速出定制包装效果图；团购满50盒起享批发价，满200盒可免费配送，还可搭配文创周边组合成礼品套盒，具体可联系平台上企业团购专属客服对接。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-2" id="aiQuickBtns">
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="导览路线怎么走？">导览</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="采茶/炒茶怎么预约？">预约</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="文创周边有哪些？">文创</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="怎么查溯源？">溯源</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="景区哪里吃饭？">就餐</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="团购怎么定制？">团购</button>
+                </div>
+
+                <div class="ai-chat-log mb-3" id="aiChatLog">
+                    <div class="ai-bubble bot">Hi～我是茶小泽！我把常见问题先整理在上面啦，你也可以直接丢给我关键词（导览、预约、区别、文创、溯源、就餐、团购），我来帮你快速搞定～</div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="form-control" id="aiQuestionInput" placeholder="请输入你的问题...">
+                    <button class="btn btn-success" type="button" id="aiAskBtn">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="imagePreviewTitle">查看大图</h5>
+                    <a class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-2" id="imagePreviewDownload" href="#" download>
+                        <i class="fas fa-download me-1"></i>下载
+                    </a>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="image-preview-viewport" id="imagePreviewViewport">
+                        <img id="imagePreviewImg" src="" alt="查看大图">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Set default font for Chart.js
+        Chart.defaults.font.family = "'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif";
+        Chart.defaults.color = '#666';
+
+        // Fetch data and render charts
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('static/data.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Update Metrics
+                    document.getElementById('totalSales').textContent = '¥' + data.total_sales.toLocaleString();
+                    document.getElementById('orderCount').textContent = data.order_count.toLocaleString();
+                    document.getElementById('avgOrderValue').textContent = '¥' + data.avg_order_value.toLocaleString();
+                    document.getElementById('customerCount').textContent = data.customer_count.toLocaleString();
+                    
+                    // Recent Orders Table
+                    const tableBody = document.getElementById('recentOrdersTable');
+                    tableBody.innerHTML = '';
+                    data.recent_orders.slice(0, 6).forEach(order => { // Show top 6
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="fw-medium text-primary">#ORD-${order.id.toString().padStart(4, '0')}</td>
+                            <td>${order.customer}</td>
+                            <td class="fw-bold text-dark">¥${order.amount.toLocaleString()}</td>
+                            <td class="text-muted"><small><i class="far fa-clock"></i> ${order.date}</small></td>
+                            <td><span class="badge bg-${getStatusColor(order.status)} bg-opacity-10 text-${getStatusColor(order.status)} border border-${getStatusColor(order.status)}">${order.status}</span></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+
+                    // Monthly Sales Chart (Smooth Line with Gradient)
+                    const monthlyCtx = document.getElementById('monthlySalesChart').getContext('2d');
+                    
+                    // Create gradient
+                    let gradient = monthlyCtx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(43, 122, 59, 0.4)');
+                    gradient.addColorStop(1, 'rgba(43, 122, 59, 0.0)');
+
+                    new Chart(monthlyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: Object.keys(data.monthly_sales),
+                            datasets: [{
+                                label: '平台销售额 (元)',
+                                data: Object.values(data.monthly_sales),
+                                borderColor: '#2b7a3b',
+                                backgroundColor: gradient,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#2b7a3b',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                tension: 0.4, // Smooth curve
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0,0,0,0.8)',
+                                    padding: 12,
+                                    titleFont: { size: 14 },
+                                    bodyFont: { size: 14 },
+                                    displayColors: false
+                                }
+                            },
+                            scales: {
+                                x: { grid: { display: false } },
+                                y: { 
+                                    grid: { borderDash: [5, 5], color: '#eee' },
+                                    beginAtZero: true 
+                                }
+                            }
+                        }
+                    });
+
+                    // Category Chart (Doughnut with Tea Colors)
+                    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                    new Chart(categoryCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(data.category_sales),
+                            datasets: [{
+                                data: Object.values(data.category_sales),
+                                backgroundColor: [
+                                    '#2b7a3b', // Deep green
+                                    '#4caf50', // Light green
+                                    '#81c784', // Pale green
+                                    '#ffb300', // Yellow/Gold (Tea color)
+                                    '#f57c00', // Orange/Brown
+                                    '#8d6e63'  // Earthy brown
+                                ],
+                                borderWidth: 2,
+                                borderColor: '#fff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            cutout: '65%',
+                            plugins: {
+                                legend: { 
+                                    position: 'bottom',
+                                    labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' }
+                                }
+                            }
+                        }
+                    });
+
+                    // Top Products Chart (Horizontal Bar)
+                    const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+                    new Chart(topProductsCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(data.top_products),
+                            datasets: [{
+                                label: '累计销量 (件)',
+                                data: Object.values(data.top_products),
+                                backgroundColor: '#4caf50',
+                                borderRadius: 6,
+                                barThickness: 15
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { grid: { borderDash: [5, 5], color: '#eee' } },
+                                y: { grid: { display: false } }
+                            }
+                        }
+                    });
+
+                })
+                .catch(error => console.error('Error loading data:', error));
+        });
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'Completed': return 'success';
+                case 'Shipped': return 'primary';
+                case 'Processing': return 'warning';
+                case 'Cancelled': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        const aiMascotEntry = document.getElementById('aiMascotEntry');
+        const aiPage = document.getElementById('aiPage');
+        const aiPageClose = document.getElementById('aiPageClose');
+        const aiAskBtn = document.getElementById('aiAskBtn');
+        const aiQuestionInput = document.getElementById('aiQuestionInput');
+        const aiChatLog = document.getElementById('aiChatLog');
+
+        const imagePreviewModalEl = document.getElementById('imagePreviewModal');
+        const imagePreviewViewportEl = document.getElementById('imagePreviewViewport');
+        const imagePreviewImgEl = document.getElementById('imagePreviewImg');
+        const imagePreviewTitleEl = document.getElementById('imagePreviewTitle');
+        const imagePreviewDownloadEl = document.getElementById('imagePreviewDownload');
+
+        let lastBodyOverflow = '';
+        function openOverlay(el) {
+            if (!el) return;
+            lastBodyOverflow = document.body.style.overflow || '';
+            document.body.style.overflow = 'hidden';
+            el.classList.add('is-open');
+            el.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeOverlay(el) {
+            if (!el) return;
+            el.classList.remove('is-open');
+            el.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = lastBodyOverflow;
+        }
+
+        function appendBubble(text, type) {
+            const div = document.createElement('div');
+            div.className = `ai-bubble ${type}`;
+            div.textContent = text;
+            aiChatLog.appendChild(div);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
+        }
+
+        function appendTyping() {
+            const div = document.createElement('div');
+            div.className = 'ai-bubble bot';
+            div.textContent = '茶小泽正在输入…';
+            aiChatLog.appendChild(div);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
+            return div;
+        }
+
+        function matchFaqAnswer(q) {
+            const s = (q || '').toLowerCase();
+            if (s.includes('导览') || s.includes('路线') || s.includes('点位') || s.includes('天空之镜')) {
+                return '当然可以～我先给你一条轻松好逛的路线：游客中心→天空之镜→核心茶园采茶体验→非遗工坊→云雾茶吧，全程大约2-3小时。想看更直观的点位分布，点一下上面的“查看导览图”就能直接看大图啦！你更想走轻松打卡路线，还是深度体验路线？';
+            }
+            if (s.includes('预约') || s.includes('采茶') || s.includes('炒茶') || s.includes('研学')) {
+                return '安排～预约很简单：在首页“茶文旅”板块选项目（采茶/炒茶/研学）→选日期和人数→提交并支付预约金。成功后会短信提醒你，带着预约码到景区核销就行～';
+            }
+            if (s.includes('区别') || s.includes('普通绿茶') || s.includes('特色') || s.includes('七泡') || s.includes('晚来香')) {
+                return '这个我超会聊～安顶云雾茶是杭州十大名茶、明代贡茶，产自高山云雾小气候，内含物更足（比如水浸出物46%+、氨基酸4.1%+）；再加上杭州非遗手工炒制“三温三炒+十大手法”，所以茶汤更醇厚，才有“七泡有余香”“晚来香”的说法。';
+            }
+            if (s.includes('文创') || s.includes('周边') || s.includes('冰箱贴') || s.includes('茶宠') || s.includes('挂件')) {
+                return '有的有的～周边文创主打“茶小泽”系列：毛绒挂件、冰箱贴、茶宠摆件，还有定制茶具套装、茶园风景手账等。你可以在游客中心/非遗工坊线下买，也能线上选购，支持快递到家～';
+            }
+            if (s.includes('溯源') || s.includes('二维码') || s.includes('扫码') || s.includes('茶标')) {
+                return '没问题～每款产品包装上都有专属数字溯源码，微信扫码就能看；也可以登录平台“茶标自助机”查询，茶园、采摘时间、炒茶师傅、加工流程、品控检测等信息都能查到，安心喝茶～';
+            }
+            if (s.includes('就餐') || s.includes('吃饭') || s.includes('茶吧') || s.includes('农家乐') || s.includes('消费')) {
+                return '当然可以～景区里有云雾茶吧和合作农家乐：茶吧单杯大概20-50元，茶位费88元/位起；农家乐人均约60-100元，还能配茶点和茶叶特色菜品，挺舒服的～';
+            }
+            if (s.includes('团购') || s.includes('礼品') || s.includes('定制') || s.includes('包装') || s.includes('合作')) {
+                return '可以安排团购定制哟～礼盒支持印企业LOGO/祝福语，50盒起有批发价，200盒可免费配送；还可以搭配文创周边做成礼品套盒，更有仪式感。';
+            }
+            return '你可以先点开上面常见问题看看～也可以直接丢给我关键词（导览、预约、区别、文创、溯源、就餐、团购），我来给你快速回答！';
+        }
+
+        const aiHistory = [];
+        function pushAiHistory(role, content) {
+            if (!content) return;
+            aiHistory.push({ role, content: String(content) });
+            if (aiHistory.length > 30) aiHistory.splice(0, aiHistory.length - 30);
+        }
+
+        async function requestAiAnswer(q) {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: q,
+                    history: aiHistory.slice(-10),
+                    page: 'dashboard',
+                })
+            });
+            if (!res.ok) throw new Error(`http ${res.status}`);
+            const data = await res.json();
+            if (data && typeof data.reply === 'string' && data.reply.trim()) return data.reply.trim();
+            if (data && typeof data.error === 'string' && data.error) throw new Error(data.error);
+            throw new Error('empty reply');
+        }
+
+        const imagePreviewState = {
+            scale: 1,
+            x: 0,
+            y: 0,
+            activePointers: new Map(),
+            draggingId: null,
+            draggingStartX: 0,
+            draggingStartY: 0,
+            pinchStartDist: 0,
+            pinchStartScale: 1,
+            pinchStartX: 0,
+            pinchStartY: 0,
+            pinchCenterX: 0,
+            pinchCenterY: 0,
+        };
+
+        function clampScale(v) {
+            return Math.min(4, Math.max(1, v));
+        }
+
+        function applyImagePreviewTransform() {
+            if (!imagePreviewImgEl) return;
+            imagePreviewImgEl.style.transform = `translate3d(${imagePreviewState.x}px, ${imagePreviewState.y}px, 0) scale(${imagePreviewState.scale})`;
+        }
+
+        function resetImagePreviewTransform() {
+            imagePreviewState.scale = 1;
+            imagePreviewState.x = 0;
+            imagePreviewState.y = 0;
+            imagePreviewState.activePointers.clear();
+            imagePreviewState.draggingId = null;
+            applyImagePreviewTransform();
+        }
+
+        function zoomAround(centerX, centerY, nextScale) {
+            const prevScale = imagePreviewState.scale;
+            const scale = clampScale(nextScale);
+            if (scale === prevScale) return;
+            const ratio = scale / prevScale;
+            imagePreviewState.x = imagePreviewState.x * ratio + centerX * (1 - ratio);
+            imagePreviewState.y = imagePreviewState.y * ratio + centerY * (1 - ratio);
+            imagePreviewState.scale = scale;
+            applyImagePreviewTransform();
+        }
+
+        function openImagePreview(src, title) {
+            if (!imagePreviewModalEl || !imagePreviewImgEl) return;
+            imagePreviewImgEl.src = src;
+            imagePreviewImgEl.alt = title || '查看大图';
+            if (imagePreviewTitleEl) imagePreviewTitleEl.textContent = title || '查看大图';
+            if (imagePreviewDownloadEl) {
+                imagePreviewDownloadEl.href = src || '#';
+                const filename = (src || '').split('/').pop() || 'image';
+                imagePreviewDownloadEl.setAttribute('download', filename);
+            }
+            resetImagePreviewTransform();
+            const modal = bootstrap.Modal.getOrCreateInstance(imagePreviewModalEl, { backdrop: true, focus: true });
+            modal.show();
+        }
+
+        async function askAi() {
+            const q = aiQuestionInput.value.trim();
+            if (!q) return;
+            appendBubble(q, 'user');
+            pushAiHistory('user', q);
+            aiQuestionInput.value = '';
+            const typing = appendTyping();
+            try {
+                const a = await requestAiAnswer(q);
+                typing.remove();
+                appendBubble(a, 'bot');
+                pushAiHistory('assistant', a);
+            } catch (e) {
+                typing.remove();
+                const fallback = matchFaqAnswer(q);
+                if (String(e && e.message || '').includes('LLM_API_KEY')) {
+                    appendBubble(`我还没接入大模型（服务器未配置密钥），先按常见问题给你答：${fallback}`, 'bot');
+                    pushAiHistory('assistant', `我还没接入大模型（服务器未配置密钥），先按常见问题给你答：${fallback}`);
+                    return;
+                }
+                appendBubble(fallback, 'bot');
+                pushAiHistory('assistant', fallback);
+            }
+        }
+
+        if (aiMascotEntry) {
+            aiMascotEntry.addEventListener('click', function() {
+                openOverlay(aiPage);
+            });
+        }
+
+        if (aiPageClose) {
+            aiPageClose.addEventListener('click', function() {
+                closeOverlay(aiPage);
+            });
+        }
+
+        const aiQuickBtns = document.getElementById('aiQuickBtns');
+        if (aiQuickBtns) {
+            aiQuickBtns.addEventListener('click', function(e) {
+                const btn = e.target.closest('button[data-q]');
+                if (!btn) return;
+                const q = btn.getAttribute('data-q') || '';
+                if (!q) return;
+                aiQuestionInput.value = q;
+                askAi();
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.guide-map-btn');
+            if (!btn) return;
+            openImagePreview(btn.getAttribute('data-src') || '', btn.getAttribute('data-title') || '');
+        });
+
+        if (imagePreviewViewportEl) {
+            imagePreviewViewportEl.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                const rect = imagePreviewViewportEl.getBoundingClientRect();
+                const cx = e.clientX - rect.left;
+                const cy = e.clientY - rect.top;
+                const step = e.deltaY > 0 ? 0.92 : 1.08;
+                zoomAround(cx, cy, imagePreviewState.scale * step);
+            }, { passive: false });
+
+            imagePreviewViewportEl.addEventListener('pointerdown', function(e) {
+                imagePreviewViewportEl.setPointerCapture(e.pointerId);
+                imagePreviewState.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                if (imagePreviewState.activePointers.size === 1) {
+                    imagePreviewState.draggingId = e.pointerId;
+                    imagePreviewState.draggingStartX = e.clientX - imagePreviewState.x;
+                    imagePreviewState.draggingStartY = e.clientY - imagePreviewState.y;
+                }
+
+                if (imagePreviewState.activePointers.size === 2) {
+                    const pts = Array.from(imagePreviewState.activePointers.values());
+                    const dx = pts[0].x - pts[1].x;
+                    const dy = pts[0].y - pts[1].y;
+                    imagePreviewState.pinchStartDist = Math.hypot(dx, dy) || 1;
+                    imagePreviewState.pinchStartScale = imagePreviewState.scale;
+                    imagePreviewState.pinchStartX = imagePreviewState.x;
+                    imagePreviewState.pinchStartY = imagePreviewState.y;
+                    const rect = imagePreviewViewportEl.getBoundingClientRect();
+                    imagePreviewState.pinchCenterX = (pts[0].x + pts[1].x) / 2 - rect.left;
+                    imagePreviewState.pinchCenterY = (pts[0].y + pts[1].y) / 2 - rect.top;
+                    imagePreviewState.draggingId = null;
+                }
+            });
+
+            imagePreviewViewportEl.addEventListener('pointermove', function(e) {
+                if (!imagePreviewState.activePointers.has(e.pointerId)) return;
+                imagePreviewState.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                if (imagePreviewState.activePointers.size === 2) {
+                    const pts = Array.from(imagePreviewState.activePointers.values());
+                    const dx = pts[0].x - pts[1].x;
+                    const dy = pts[0].y - pts[1].y;
+                    const dist = Math.hypot(dx, dy) || 1;
+                    const nextScale = imagePreviewState.pinchStartScale * (dist / imagePreviewState.pinchStartDist);
+                    const scale = clampScale(nextScale);
+                    const ratio = scale / imagePreviewState.pinchStartScale;
+                    imagePreviewState.scale = scale;
+                    imagePreviewState.x = imagePreviewState.pinchStartX * ratio + imagePreviewState.pinchCenterX * (1 - ratio);
+                    imagePreviewState.y = imagePreviewState.pinchStartY * ratio + imagePreviewState.pinchCenterY * (1 - ratio);
+                    applyImagePreviewTransform();
+                    return;
+                }
+
+                if (imagePreviewState.draggingId !== e.pointerId) return;
+                imagePreviewState.x = e.clientX - imagePreviewState.draggingStartX;
+                imagePreviewState.y = e.clientY - imagePreviewState.draggingStartY;
+                applyImagePreviewTransform();
+            });
+
+            function endPointer(e) {
+                if (!imagePreviewState.activePointers.has(e.pointerId)) return;
+                imagePreviewState.activePointers.delete(e.pointerId);
+                if (imagePreviewState.draggingId === e.pointerId) imagePreviewState.draggingId = null;
+                if (imagePreviewState.activePointers.size === 1) {
+                    const id = Array.from(imagePreviewState.activePointers.keys())[0];
+                    imagePreviewState.draggingId = id;
+                }
+            }
+
+            imagePreviewViewportEl.addEventListener('pointerup', endPointer);
+            imagePreviewViewportEl.addEventListener('pointercancel', endPointer);
+            imagePreviewViewportEl.addEventListener('dblclick', function() {
+                resetImagePreviewTransform();
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            if (aiPage && aiPage.classList.contains('is-open')) closeOverlay(aiPage);
+        });
+
+        aiAskBtn.addEventListener('click', askAi);
+        aiQuestionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') askAi();
+        });
+    </script>
+</body>
+</html>

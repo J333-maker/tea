@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="茗不虚传 - 安顶山云雾茶产业互联网综合服务平台，整合茶产业链上下游资源，提供茶叶种植、茶园管理、茶叶加工、茶叶交易、品牌管理、品质控制、茶金融保险、茶物联、茶碳汇、茶文旅等一站式应用服务。">
+    <meta name="keywords" content="茗不虚传,茶产业互联网,茶产业服务平台,茶企互联网平台,茶产业大脑,安顶山云雾茶,数字茶园">
+    <title>茗不虚传 - 安顶山茶产业互联网综合服务平台</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <style>
+        :root {
+            --tea-primary: #00683B; /* Reference from 365tea pagination color */
+            --tea-secondary: #4caf50;
+            --tea-dark: #1b4d24;
+            --tea-light: #f7fcf9;
+            --tea-accent: #ffb300;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: #333;
+            background-image: linear-gradient(rgba(252, 252, 252, 0.86), rgba(252, 252, 252, 0.86)), url('../总览.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #fcfcfc;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 10px 0;
+        }
+
+        .navbar-nav {
+            flex-wrap: nowrap;
+        }
+        
+        .navbar-brand {
+            color: var(--tea-primary) !important;
+            font-weight: 800;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .mascot-entry {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 170px;
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .mascot-img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s ease;
+        }
+
+        .mascot-entry:hover .mascot-img {
+            transform: translateY(-2px);
+        }
+
+        .mascot-hint {
+            width: 100%;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.62);
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 999px;
+            padding: 6px 10px;
+            backdrop-filter: blur(8px);
+        }
+
+        @media (max-width: 576px) {
+            .mascot-entry {
+                width: 120px;
+                right: 12px;
+                bottom: 12px;
+            }
+        }
+
+        .ai-chat-log {
+            background: rgba(248, 249, 250, 0.8);
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            max-height: 170px;
+            overflow: auto;
+        }
+
+        .ai-bubble {
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ai-bubble.user {
+            background: rgba(0, 104, 59, 0.10);
+            border: 1px solid rgba(0, 104, 59, 0.18);
+        }
+
+        .ai-bubble.bot {
+            background: #fff;
+            border: 1px solid #eee;
+        }
+
+        .overlay-page {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: none;
+            background: rgba(247, 252, 249, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .overlay-page.is-open {
+            display: block;
+        }
+
+        .modal {
+            z-index: 3005;
+        }
+
+        .modal-backdrop {
+            z-index: 2995;
+        }
+
+        .image-preview-viewport {
+            width: 100%;
+            height: 82vh;
+            overflow: hidden;
+            touch-action: none;
+            position: relative;
+            background: #0b0f12;
+        }
+
+        .image-preview-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+            transform-origin: 0 0;
+            will-change: transform;
+        }
+
+        .overlay-header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.86);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .overlay-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--tea-primary);
+        }
+
+        .overlay-title-stack {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .overlay-title-sub {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.58);
+        }
+
+        .overlay-body {
+            height: calc(100vh - 58px);
+            overflow: auto;
+            padding: 18px 16px 26px;
+        }
+
+        .overlay-container {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .ai-chat-log {
+            max-height: 36vh;
+        }
+
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            margin: 0 10px;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--tea-primary) !important;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background-color: var(--tea-primary);
+            border-radius: 2px;
+        }
+
+        .btn-search {
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            color: #888;
+            background: #fff;
+            width: auto;
+            flex: 0 1 auto;
+            white-space: nowrap;
+        }
+        
+        .btn-search i { margin-right: 8px; }
+        .btn-search span { white-space: nowrap; }
+
+        #cartBtn, #brainBtn { white-space: nowrap; }
+
+        /* Hero Section (Carousel) */
+        .hero-swiper {
+            height: 500px;
+            margin-top: 76px; /* Offset for fixed navbar */
+        }
+
+        .hero-slide {
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 50, 20, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Section Styles */
+        .section-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--tea-primary);
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 25px;
+            background-color: var(--tea-primary);
+            border-radius: 2px;
+        }
+
+        .section-tabs .nav-link {
+            color: #666 !important;
+            border: none;
+            background: none;
+            font-weight: 400;
+        }
+
+        .section-tabs .nav-link.active {
+            color: var(--tea-primary) !important;
+            font-weight: 700;
+        }
+
+        .section-tabs .nav-link::after { display: none; }
+
+        /* Cards */
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            transition: all 0.3s;
+            height: 100%;
+            border: 1px solid #eee;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: var(--tea-primary);
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            color: var(--tea-primary);
+            margin-bottom: 15px;
+        }
+
+        .service-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .service-desc {
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        /* Carbon Section */
+        .carbon-section {
+            background-color: var(--tea-light);
+            padding: 60px 0;
+        }
+
+        .carbon-tag {
+            display: inline-block;
+            background: rgba(0, 104, 59, 0.1);
+            color: var(--tea-primary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* Product Grid */
+        .product-card {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .product-img-wrapper {
+            height: 200px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .product-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--tea-accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .product-body { padding: 15px; }
+        
+        .product-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #e53935;
+        }
+
+        #marketTabs .nav-link {
+            border: 1px solid rgba(0, 104, 59, 0.18);
+            color: var(--tea-primary);
+            background: rgba(255, 255, 255, 0.72);
+            border-radius: 999px;
+            padding: 8px 16px;
+            margin-right: 10px;
+        }
+
+        #marketTabs .nav-link:hover {
+            background: rgba(0, 104, 59, 0.10);
+            color: var(--tea-primary);
+        }
+
+        #marketTabs .nav-link:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 104, 59, 0.18);
+        }
+
+        #marketTabs .nav-link.active {
+            background: rgba(0, 104, 59, 0.14) !important;
+            color: var(--tea-primary) !important;
+        }
+
+        .industry-img {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+        }
+
+        .vr-frame {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #0b0f12;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+        }
+
+        .vr-frame::before,
+        .vr-frame::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 46%;
+            height: 78%;
+            transform: translateY(-50%);
+            border: 6px solid rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            pointer-events: none;
+            box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.16);
+        }
+
+        .vr-frame::before { left: 4%; }
+        .vr-frame::after { right: 4%; }
+
+        .vr-frame .vr-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: saturate(1.06) contrast(1.02);
+        }
+
+        #metaversePage .overlay-body {
+            overflow: hidden;
+            padding: 12px 12px 16px;
+        }
+
+        #metaversePage .overlay-container {
+            height: calc(100vh - 58px - 28px);
+            display: flex;
+            align-items: center;
+        }
+
+        #metaverseCarousel,
+        #metaverseCarousel .carousel-inner,
+        #metaverseCarousel .carousel-item {
+            height: 100%;
+        }
+
+        #metaverseCarousel .vr-frame {
+            height: 100%;
+        }
+
+        #metaverseCarousel .vr-frame .vr-img {
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .spec-option {
+            border: 1px solid rgba(0, 104, 59, 0.22);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            user-select: none;
+            transition: all 0.18s ease;
+        }
+
+        .spec-option:hover {
+            border-color: rgba(0, 104, 59, 0.38);
+            background: rgba(0, 104, 59, 0.06);
+        }
+
+        .spec-option.is-selected {
+            border-color: rgba(0, 104, 59, 0.7);
+            background: rgba(0, 104, 59, 0.10);
+        }
+
+        .spec-option-title {
+            font-weight: 800;
+            color: #1b4d24;
+        }
+
+        .spec-option-meta {
+            font-weight: 800;
+            color: #e53935;
+            white-space: nowrap;
+        }
+
+        .qty-stepper .btn {
+            width: 44px;
+        }
+
+        .qty-stepper input {
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .vr-label {
+            position: absolute;
+            left: 14px;
+            bottom: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: #ccc;
+            padding: 50px 0 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer-title {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .footer ul { padding-left: 0; list-style: none; }
+        .footer ul li { margin-bottom: 10px; }
+        .footer a { color: #ccc; text-decoration: none; transition: 0.3s; }
+        .footer a:hover { color: white; }
+        
+        .footer-contact i { width: 20px; color: var(--tea-secondary); }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../logo.jpg" alt="公司Logo" class="brand-logo-img">
+                茗不虚传
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#culture">茶文旅</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#industry">茶产业</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tech">茶科技</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#service">茶服务</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#carbon">茶碳汇</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#market">交易中心</a></li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="btn-search">
+                    <i class="fas fa-search"></i> <span style="font-size: 0.9rem;">搜索</span>
+                </div>
+                <button type="button" class="btn btn-outline-success rounded-pill position-relative px-3" id="cartBtn" aria-label="购物车">
+                    <i class="fas fa-shopping-cart me-1"></i>购物车
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge">0</span>
+                </button>
+                <a class="btn btn-outline-success rounded-pill px-3" id="brainBtn" href="index.html" aria-label="产业大脑">
+                    <i class="fas fa-chart-pie me-1"></i>产业大脑
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Swiper -->
+    <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide hero-slide" style="background-image: url('../封面.jpg');">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title">安顶山茶产业互联网<br>综合服务平台</h1>
+                    <p class="hero-subtitle">整合全产业链资源 · 赋能数字农业 · 助力乡村振兴</p>
+                    <a href="#market" class="btn btn-success btn-lg rounded-pill px-5">进入云雾茶交易中心</a>
+                </div>
+            </div>
+            <!-- Add more slides if needed -->
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+
+        <section id="culture" class="mb-5">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">茶文旅 · 在线预约</h2>
+                <span class="badge bg-success rounded-pill px-3 py-2">采茶 · 炒茶 · 研学</span>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm p-4 h-100">
+                        <h4 class="fw-bold mb-2"><i class="fas fa-mountain-sun text-success me-2"></i> 安顶山文旅体验</h4>
+                        <p class="text-muted mb-4">
+                            线上预约采茶、非遗炒茶与研学体验。提交后可在手机端完成支付预约金与短信确认，到景区凭预约码核销。
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-3 border rounded bg-light h-100">
+                                    <div class="fw-bold mb-1">采茶体验</div>
+                                    <small class="text-muted">深入核心茶园，亲手采摘</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 border rounded bg-light h-100">
+                                    <div class="fw-bold mb-1">非遗炒茶</div>
+                                    <small class="text-muted">看技艺、学手法、带走成品</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 border rounded bg-light h-100">
+                                    <div class="fw-bold mb-1">茶主题研学</div>
+                                    <small class="text-muted">亲子与团体研学课程</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold mb-3"><i class="fas fa-calendar-check text-success me-2"></i> 立即预约</h5>
+                        <form id="tourBookingForm" class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label mb-1">体验项目</label>
+                                <select class="form-select" id="tourProject" required>
+                                    <option value="" selected disabled>请选择项目</option>
+                                    <option value="采茶">采茶</option>
+                                    <option value="炒茶">炒茶</option>
+                                    <option value="研学">研学</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label mb-1">预约日期</label>
+                                <input type="date" class="form-control" id="tourDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label mb-1">人数</label>
+                                <input type="number" min="1" max="99" class="form-control" id="tourPeople" placeholder="请输入人数" required>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-success rounded-pill"><i class="fas fa-paper-plane me-2"></i>提交预约</button>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <button type="button" class="btn btn-outline-danger rounded-pill d-none" id="tourCancelBtn"><i class="fas fa-xmark me-2"></i>取消预约</button>
+                            </div>
+                            <div class="col-12">
+                                <div id="tourBookingResult" class="text-success fw-semibold d-none"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tea Industry (茶产业) -->
+        <section id="industry" class="mb-5">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">茶产业</h2>
+                <ul class="nav section-tabs">
+                    <li class="nav-item"><a class="nav-link active" href="#">数字茶园</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">未来茶场</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">茶产业大脑</a></li>
+                </ul>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <img src="../数字2.jpg" class="img-fluid rounded shadow-sm industry-img" alt="数字导入2">
+                </div>
+                <div class="col-md-6">
+                    <div class="h-100 d-flex flex-column justify-content-center">
+                        <h3 class="fw-bold mb-3 text-success">安顶山数字茶园示范基地</h3>
+                        <p class="text-muted mb-4">
+                            通过部署智能气象站、土壤墒情监测仪、虫情测报灯等物联网设备，实时采集茶园环境数据。结合遥感卫星影像，实现茶园长势监测、灾害预警和精准施肥灌溉。
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 border rounded bg-light">
+                                    <i class="fas fa-satellite-dish text-primary mb-2"></i>
+                                    <h6 class="fw-bold">全域感知</h6>
+                                    <small class="text-muted">空天地一体化监测体系</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 border rounded bg-light">
+                                    <i class="fas fa-brain text-warning mb-2"></i>
+                                    <h6 class="fw-bold">智能决策</h6>
+                                    <small class="text-muted">AI 辅助农事管理建议</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tea Tech (茶科技) -->
+        <section id="tech" class="mb-5">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">茶科技</h2>
+                <a href="#" class="text-muted text-decoration-none">更多 <i class="fas fa-angle-right"></i></a>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="service-card text-center">
+                        <div class="service-icon"><i class="fas fa-weight-hanging"></i></div>
+                        <h5 class="service-title">智能溯源秤</h5>
+                        <p class="service-desc">茶青收购、加工称重数字化。记录产地、品种、等级及茶农信息，实现源头可追溯。</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="service-card text-center">
+                        <div class="service-icon"><i class="fas fa-qrcode"></i></div>
+                        <h5 class="service-title">茶标自助机</h5>
+                        <p class="service-desc">一物一码，扫码即查。为每一份安顶云雾茶生成唯一的数字身份证，保障品牌信誉。</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="service-card text-center">
+                        <div class="service-icon"><i class="fas fa-microchip"></i></div>
+                        <h5 class="service-title">智能硬件集成</h5>
+                        <p class="service-desc">整合气象站、视频监控、水肥一体化设备，构建完整的茶园物联网生态系统。</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="service-card text-center" id="metaverseEntry" role="button" style="cursor: pointer;" aria-label="打开茶园元宇宙">
+                        <div class="service-icon"><i class="fas fa-vr-cardboard"></i></div>
+                        <h5 class="service-title">茶园元宇宙</h5>
+                        <p class="service-desc">利用 VR/AR 技术，让消费者身临其境体验安顶山云雾缭绕的采茶场景，促进茶文旅融合。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tea Service (茶服务) -->
+        <section id="service" class="mb-5">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">茶服务</h2>
+                <ul class="nav section-tabs">
+                    <li class="nav-item"><a class="nav-link active" href="#">品牌服务</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">茶金融</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">市场调研</a></li>
+                </ul>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <h5 class="service-title border-bottom pb-2 mb-3"><i class="fas fa-poll text-info me-2"></i> 市场与消费者调研</h5>
+                        <p class="service-desc mb-3">采集茶企相关信息，从宏观层面给予茶产业发展趋势观点。深入了解品牌的知晓度、美誉度，洞悉茶企品牌机会。</p>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">了解详情</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <h5 class="service-title border-bottom pb-2 mb-3"><i class="fas fa-bullhorn text-danger me-2"></i> 品牌定位与营销</h5>
+                        <p class="service-desc mb-3">基于品牌发展愿景，制定核心价值表达。策划品牌发布会、推介会，对接线上线下渠道，扩大品牌影响力。</p>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">了解详情</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <h5 class="service-title border-bottom pb-2 mb-3"><i class="fas fa-file-invoice-dollar text-success me-2"></i> 供应链金融服务</h5>
+                        <p class="service-desc mb-3">基于真实的交易数据和库存数据，为茶企提供“茶园贷”、“订单贷”等普惠金融服务，解决融资难题。</p>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill">了解详情</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Tea Carbon (茶碳汇) - Full Width Background -->
+    <section id="carbon" class="carbon-section">
+        <div class="container">
+            <div class="section-title-wrapper border-bottom-0">
+                <h2 class="section-title">茶碳汇</h2>
+                <span class="badge bg-success rounded-pill px-3 py-2">绿水青山就是金山银山</span>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h4 class="fw-bold mb-3"><i class="fas fa-tree text-success me-2"></i> 茶园碳汇价值</h4>
+                        <p class="text-muted mb-4">
+                            农业是重要的温室气体排放源之一，同时也有巨大的碳汇能力。茶园具有很高的植被覆盖率，茶树树冠覆盖面积大，固碳能力强。
+                        </p>
+                        <div class="mb-3">
+                            <div class="carbon-tag"><i class="fas fa-check-circle me-1"></i> 政府承诺: 2030碳达峰 / 2060碳中和</div>
+                            <div class="carbon-tag"><i class="fas fa-check-circle me-1"></i> 产业优势: 产业链最长、数字化基础好</div>
+                            <div class="carbon-tag"><i class="fas fa-check-circle me-1"></i> 社会价值: 促进新旧动能转换</div>
+                        </div>
+                        <a href="#" class="btn btn-success rounded-pill mt-2">查看碳汇交易案例</a>
+                    </div>
+                </div>
+                <div class="col-md-7 text-center">
+                    <img src="../碳汇.jpg" class="img-fluid rounded shadow" alt="碳汇">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tea Market (商城) -->
+    <div class="container py-5" id="market">
+        <div class="section-title-wrapper">
+            <h2 class="section-title">安顶云雾茶交易中心</h2>
+            <a href="#" class="btn btn-outline-success rounded-pill btn-sm" id="allProductsBtn">查看全部茶品</a>
+        </div>
+        <ul class="nav nav-pills mb-4" id="marketTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-preorder" data-bs-toggle="pill" data-bs-target="#pane-preorder" type="button" role="tab">茶叶预定</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-merch" data-bs-toggle="pill" data-bs-target="#pane-merch" type="button" role="tab">文创周边</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="pane-preorder" role="tabpanel" aria-labelledby="tab-preorder">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm p-4 h-100">
+                            <h4 class="fw-bold mb-2"><i class="fas fa-seedling text-success me-2"></i> 茶叶预定</h4>
+                            <p class="text-muted mb-4">
+                                安顶云雾茶<br>一脉千年贡茶底蕴，始于三国东吴皇宴臻饮，明洪武年间钦定贡茶，盛誉延绵至清。扎根富阳安顶山350亩核心产区，坐拥“天空之境”独特高山云雾小气候，凝山水灵气成茶，手工炒制技艺为杭州市级非遗，色绿香高、味醇形美，藏着富春山居的自然诗意与匠心传承。
+                            </p>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="product-card">
+                                        <div class="product-img-wrapper">
+                                            <img class="preorder-view-img" src="../手工·匠心.jpg" alt="手工·匠心">
+                                            <div class="product-badge">限量预定</div>
+                                        </div>
+                                        <div class="product-body">
+                                            <h3 class="product-title">手工·匠心</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="product-price">¥3000 <span class="text-muted" style="font-size: 0.85rem; font-weight: 700;">/ 500g</span></div>
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3 preorder-btn" data-grade="手工·匠心">预定</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="product-card">
+                                        <div class="product-img-wrapper">
+                                            <img class="preorder-view-img" src="../特选级.jpg" alt="特选级">
+                                            <div class="product-badge">限量预定</div>
+                                        </div>
+                                        <div class="product-body">
+                                            <h3 class="product-title">特选级</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="product-price">¥1899 <span class="text-muted" style="font-size: 0.85rem; font-weight: 700;">/ 500g</span></div>
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3 preorder-btn" data-grade="特选级">预定</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="product-card">
+                                        <div class="product-img-wrapper">
+                                            <img class="preorder-view-img" src="../精选级.jpg" alt="精选级">
+                                            <div class="product-badge">预定</div>
+                                        </div>
+                                        <div class="product-body">
+                                            <h3 class="product-title">精选级</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="product-price">¥1399 <span class="text-muted" style="font-size: 0.85rem; font-weight: 700;">/ 500g</span></div>
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3 preorder-btn" data-grade="精选级">预定</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="product-card">
+                                        <div class="product-img-wrapper">
+                                            <img class="preorder-view-img" src="../优选级.jpg" alt="优选级">
+                                            <div class="product-badge">预定</div>
+                                        </div>
+                                        <div class="product-body">
+                                            <h3 class="product-title">优选级</h3>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="product-price">¥999 <span class="text-muted" style="font-size: 0.85rem; font-weight: 700;">/ 500g</span></div>
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3 preorder-btn" data-grade="优选级">预定</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-clipboard-list text-success me-2"></i> 提交预定</h5>
+                            <form id="preorderForm" class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label mb-1">预定等级</label>
+                                    <select class="form-select" id="preorderBatch" required>
+                                        <option value="" selected disabled>请选择等级</option>
+                                        <option value="手工·匠心">手工·匠心</option>
+                                        <option value="特选级">特选级</option>
+                                        <option value="精选级">精选级</option>
+                                        <option value="优选级">优选级</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" id="preorderSpec" value="">
+                                <div class="col-12">
+                                    <label class="form-label mb-1">数量（盒）</label>
+                                    <input type="number" min="1" max="99" class="form-control" id="preorderQty" required>
+                                </div>
+                                <div class="col-12 d-grid">
+                                    <button type="submit" class="btn btn-success rounded-pill"><i class="fas fa-lock me-2"></i>锁定预定</button>
+                                </div>
+                                <div class="col-12">
+                                    <div id="preorderResult" class="text-success fw-semibold d-none"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-merch" role="tabpanel" aria-labelledby="tab-merch">
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="../钥匙扣.jpg" alt="钥匙扣">
+                                <div class="product-badge">文创</div>
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-title">茶小泽钥匙扣</h3>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="product-price">¥29</div>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3 merch-buy-btn" data-name="茶小泽钥匙扣" data-price="29">购买</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="../金属冰箱贴.jpg" alt="金属冰箱贴">
+                                <div class="product-badge">文创</div>
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-title">茶小泽金属冰箱贴</h3>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="product-price">¥59</div>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3 merch-buy-btn" data-name="茶小泽金属冰箱贴" data-price="59">购买</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="../系列盲盒.jpg" alt="系列盲盒">
+                                <div class="product-badge">文创</div>
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-title">茶小泽系列盲盒</h3>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="product-price">¥69</div>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3 merch-buy-btn" data-name="茶小泽系列盲盒" data-price="69">购买</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="../茶宠.jpg" alt="茶宠">
+                                <div class="product-badge">文创</div>
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-title">茶小泽茶宠</h3>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="product-price">¥179</div>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3 merch-buy-btn" data-name="茶小泽茶宠" data-price="179">购买</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">茗不虚传 · 产业互联</h5>
+                    <p class="mb-4">致力于中国茶产业数字化转型，打造“数字茶园+智慧工厂+云端交易+绿色金融”的全产业链生态闭环。</p>
+                    <img src="../logo.jpg" alt="公司Logo" class="rounded bg-white p-2" style="width: 96px; height: 96px; object-fit: contain;">
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">核心服务</h5>
+                    <ul>
+                        <li><a href="#">数字茶园解决方案</a></li>
+                        <li><a href="#">茶企 ERP 系统</a></li>
+                        <li><a href="#">溯源防伪体系</a></li>
+                        <li><a href="#">茶碳汇资产管理</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">友情链接</h5>
+                    <ul>
+                        <li><a href="#">中国茶叶流通协会</a></li>
+                        <li><a href="#">农业农村部</a></li>
+                        <li><a href="#">安顶山云雾茶官网</a></li>
+                        <li><a href="#">茶小智产业大脑</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4 footer-contact">
+                    <h5 class="footer-title">联系我们</h5>
+                    <ul>
+                        <li><i class="fas fa-phone-alt"></i> 咨询热线：400-888-TEA9</li>
+                        <li><i class="fas fa-headset"></i> 直线电话：18857131919</li>
+                        <li><i class="fas fa-envelope"></i> 邮箱：contact@mingbuxuchuan.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 地址：杭州市富阳区里山镇安顶村游客服务中心</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary mt-4 mb-4">
+            <div class="text-center text-muted">
+                <p class="mb-1">Copyright © 2026 茗不虚传 - 安顶山云雾茶数字焕新方案. All Rights Reserved.</p>
+                <small>浙ICP备0910xxxx号 | 浙公网安备 330106xxxx号 | 技术支持：茶小智架构参考</small>
+            </div>
+        </div>
+    </footer>
+
+    <div class="mascot-entry" id="aiMascotEntry" title="AI 客服 · 茶小泽">
+        <img class="mascot-img" src="../茶小泽2.png" alt="茶小泽2">
+        <div class="mascot-hint">Hi～我是茶小泽，关于安顶山茶产业的任何问题，尽管问我噢！</div>
+    </div>
+
+    <div class="overlay-page" id="aiPage" aria-hidden="true">
+        <div class="overlay-header">
+            <div class="overlay-title">
+                <img src="../茶小泽2.png" alt="茶小泽2" style="width: 34px; height: 34px; object-fit: contain; border-radius: 10px;">
+                <div class="overlay-title-stack">
+                    <div>茶小泽 · AI 客服</div>
+                    <div class="overlay-title-sub">Hi～我是茶小泽，关于安顶山茶产业的任何问题，尽管问我噢！</div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="aiPageClose">
+                <i class="fas fa-times me-1"></i>关闭
+            </button>
+        </div>
+        <div class="overlay-body">
+            <div class="overlay-container">
+                <div class="accordion mb-3" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c1">
+                                    1、安顶山景区有哪些核心游玩点位，有没有导览路线？
+                                </button>
+                            </h2>
+                            <div id="faq-c1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    核心点位有茶非遗工坊、天空之镜、云雾露营基地、星空观景点、核心茶园体验区；推荐轻量导览路线：游客中心→天空之镜打卡→核心茶园采茶体验→非遗工坊看炒茶技艺→云雾茶吧品茶，全程约2-3小时，适合休闲游览。
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill guide-map-btn" data-src="../导览.jpg" data-title="安顶山导览图">
+                                            <i class="fas fa-map-marked-alt me-1"></i>查看导览图
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c2">
+                                    2、想体验茶园采茶、非遗炒茶课程，该怎么在线预约？
+                                </button>
+                            </h2>
+                            <div id="faq-c2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    可进入安顶山茶产业综合服务平台，点击首页茶文旅板块，选择对应体验项目（采茶/炒茶/研学），选择预约日期、人数并提交，支付预约金即可完成；预约成功后会收到短信提醒，凭预约码到景区核销即可。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c3">
+                                    3、安顶云雾茶和普通绿茶有什么区别，核心特色是什么？
+                                </button>
+                            </h2>
+                            <div id="faq-c3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    安顶云雾茶是杭州十大名茶、明代贡茶，产自安顶山高山云雾小气候，水浸出物46%+、氨基酸4.1%+，远高于普通绿茶，有“七泡有余香”“晚来香”的独特品质；手工炒制技艺为杭州非遗，采用“三温三炒”古法和“十大手法”，茶汤醇厚、清热降火且不影响睡眠。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c4">
+                                    4、安顶云雾茶有哪些周边文创产品，在哪里可以购买？
+                                </button>
+                            </h2>
+                            <div id="faq-c4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    核心周边有吉祥物“茶小泽”毛绒挂件、冰箱贴、茶宠摆件，还有定制茶具套装、茶园风景手账等；可在景区游客中心、非遗工坊线下购买，也可在官方平台、抖音小店、微店线上选购，支持全国快递配送。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c5">
+                                    5、线上购买的安顶云雾茶，怎么查产品溯源信息？
+                                </button>
+                            </h2>
+                            <div id="faq-c5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    每款产品包装上均贴有专属数字溯源码，微信扫码即可查看，或登录安顶茶产业平台“茶标自助机”查询，包含茶叶的种植茶园、采摘时间、炒茶师傅、加工流程、品控检测等全链路信息，确保产品正宗。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c6">
+                                    6、景区内有没有品茶、就餐的地方，消费大概在什么水平？
+                                </button>
+                            </h2>
+                            <div id="faq-c6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    景区内有云雾茶吧、合作农家乐，茶吧可品尝不同品级的安顶云雾茶，单杯体验价20-50元，茶位费88元/位起；农家乐以本地农家菜为主，人均消费60-100元，可搭配茶点、茶叶特色菜品。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq-h7">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c7">
+                                    7、企业想团购安顶云雾茶做礼品，能不能定制包装，有什么合作政策？
+                                </button>
+                            </h2>
+                            <div id="faq-c7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    支持企业团购定制，可在礼盒上印制企业LOGO、专属祝福语，AI设计团队可快速出定制包装效果图；团购满50盒起享批发价，满200盒可免费配送，还可搭配文创周边组合成礼品套盒，具体可联系平台上企业团购专属客服对接。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-2" id="aiQuickBtns">
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="导览路线怎么走？">导览</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="采茶/炒茶怎么预约？">预约</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="文创周边有哪些？">文创</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="怎么查溯源？">溯源</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="景区哪里吃饭？">就餐</button>
+                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-q="团购怎么定制？">团购</button>
+                </div>
+
+                <div class="ai-chat-log mb-3" id="aiChatLog">
+                    <div class="ai-bubble bot">Hi～我是茶小泽！我把常见问题先整理在上面啦，你也可以直接丢给我关键词（导览、预约、区别、文创、溯源、就餐、团购），我来帮你快速搞定～</div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="form-control" id="aiQuestionInput" placeholder="请输入你的问题...">
+                    <button class="btn btn-success" type="button" id="aiAskBtn">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-page" id="metaversePage" aria-hidden="true">
+        <div class="overlay-header">
+            <div class="overlay-title">
+                <i class="fas fa-vr-cardboard"></i>
+                茶园元宇宙 · 实景 VR
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="metaversePageClose">
+                <i class="fas fa-times me-1"></i>关闭
+            </button>
+        </div>
+        <div class="overlay-body">
+            <div class="overlay-container">
+                <div id="metaverseCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#metaverseCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#metaverseCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#metaverseCarousel" data-bs-slide-to="2"></button>
+                        <button type="button" data-bs-target="#metaverseCarousel" data-bs-slide-to="3"></button>
+                        <button type="button" data-bs-target="#metaverseCarousel" data-bs-slide-to="4"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="vr-frame">
+                                <img class="vr-img" src="../城市书屋.jpg" alt="城市书屋">
+                                <div class="vr-label">城市书屋.jpg</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="vr-frame">
+                                <img class="vr-img" src="../古树群公园.jpg" alt="古树群公园">
+                                <div class="vr-label">古树群公园.jpg</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="vr-frame">
+                                <img class="vr-img" src="../松香茶径.jpg" alt="松香茶径">
+                                <div class="vr-label">松香茶径.jpg</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="vr-frame">
+                                <img class="vr-img" src="../以茶代酒.jpg" alt="以茶代酒">
+                                <div class="vr-label">以茶代酒.jpg</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="vr-frame">
+                                <img class="vr-img" src="../游客服务中心.jpg" alt="游客服务中心">
+                                <div class="vr-label">游客服务中心.jpg</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#metaverseCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#metaverseCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="allProductsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-bag-shopping text-success me-2"></i>全部茶品</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="fw-bold mb-0">茶叶预定</h6>
+                            <span class="text-muted small">点击“预定”可选择规格与数量</span>
+                        </div>
+                        <div class="row g-3" id="allProductsPreorder"></div>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="fw-bold mb-0">文创周边</h6>
+                            <span class="text-muted small">精选安顶山文创好物</span>
+                        </div>
+                        <div class="row g-3" id="allProductsMerch"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="preorderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="preorderModalTitle">茶叶预定</h5>
+                        <div class="text-muted small mt-1" id="preorderModalSummary"></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="fw-bold mb-2">产品规格</div>
+                        <div class="spec-grid" id="preorderSpecOptions"></div>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-2">数量</div>
+                        <div class="input-group qty-stepper" style="max-width: 260px;">
+                            <button class="btn btn-outline-secondary" type="button" id="preorderQtyMinus">-</button>
+                            <input type="text" class="form-control" id="preorderModalQty" value="1" inputmode="numeric" aria-label="数量">
+                            <button class="btn btn-outline-secondary" type="button" id="preorderQtyPlus">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success rounded-pill px-4" id="preorderModalConfirm"><i class="fas fa-check me-2"></i>确认预定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="merchBuyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="merchBuyModalTitle">购买文创周边</h5>
+                        <div class="text-muted small mt-1" id="merchBuyModalSummary"></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="fw-bold mb-2">数量</div>
+                        <div class="input-group qty-stepper" style="max-width: 260px;">
+                            <button class="btn btn-outline-secondary" type="button" id="merchQtyMinus">-</button>
+                            <input type="text" class="form-control" id="merchQtyInput" value="1" inputmode="numeric" aria-label="数量">
+                            <button class="btn btn-outline-secondary" type="button" id="merchQtyPlus">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-outline-success rounded-pill px-4" id="merchAddToCartBtn"><i class="fas fa-cart-plus me-2"></i>加入购物车</button>
+                    <button type="button" class="btn btn-success rounded-pill px-4" id="merchBuyNowBtn"><i class="fas fa-bolt me-2"></i>立即购买</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-shopping-cart text-success me-2"></i>购物车</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="fw-bold">已选商品</div>
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" id="cartClearBtn">清空</button>
+                            </div>
+                            <div id="cartItems"></div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <div class="fw-bold">合计：<span class="text-success" id="cartTotal">¥0</span></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="fw-bold mb-2">结算信息</div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label mb-1">收货人</label>
+                                    <input type="text" class="form-control" id="checkoutName" placeholder="请输入收货人姓名">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label mb-1">电话</label>
+                                    <input type="tel" class="form-control" id="checkoutPhone" placeholder="请输入手机号">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label mb-1">地址</label>
+                                    <input type="text" class="form-control" id="checkoutAddress" placeholder="请输入详细地址">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label mb-1">备注</label>
+                                    <textarea class="form-control" id="checkoutNote" rows="3" placeholder="可填写发货批次偏好、是否礼盒等"></textarea>
+                                </div>
+                                <div class="col-12 d-grid">
+                                    <button type="button" class="btn btn-success rounded-pill" id="checkoutSubmitBtn"><i class="fas fa-check me-2"></i>提交订单</button>
+                                </div>
+                                <div class="col-12">
+                                    <div class="text-muted small">提交后平台客服会与您确认【发货批次】与【支付方式】。</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2100;">
+        <div id="merchBuyToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="merchBuyToastBody">已选择</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="imagePreviewTitle">查看大图</h5>
+                    <a class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-2" id="imagePreviewDownload" href="#" download>
+                        <i class="fas fa-download me-1"></i>下载
+                    </a>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="image-preview-viewport" id="imagePreviewViewport">
+                        <img id="imagePreviewImg" src="" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Init Swiper
+        const swiper = new Swiper('.hero-swiper', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+
+        const isTeaPlatformDir = window.location.pathname.includes('/tea_platform/');
+        const assetPrefix = isTeaPlatformDir ? '../' : './';
+
+        document.body.style.backgroundImage = `linear-gradient(rgba(252, 252, 252, 0.86), rgba(252, 252, 252, 0.86)), url('${assetPrefix}总览.jpg')`;
+
+        document.querySelectorAll('img[src]').forEach((img) => {
+            const raw = img.getAttribute('src') || '';
+            if (raw.startsWith('../')) img.setAttribute('src', assetPrefix + raw.slice(3));
+        });
+
+        document.querySelectorAll('[data-src]').forEach((el) => {
+            const raw = el.getAttribute('data-src') || '';
+            if (raw.startsWith('../')) el.setAttribute('data-src', assetPrefix + raw.slice(3));
+        });
+
+        document.querySelectorAll('[style*="url("]').forEach((el) => {
+            const style = el.getAttribute('style') || '';
+            if (!style.includes('../')) return;
+            const next = style.replace(/url\((['"]?)(\.\.\/[^'")]+)\1\)/g, function(_, q, p) {
+                return `url(${q}${assetPrefix}${p.slice(3)}${q})`;
+            });
+            if (next !== style) el.setAttribute('style', next);
+        });
+
+        if (!isTeaPlatformDir) {
+            document.querySelectorAll('a[href="index.html"]').forEach((a) => a.setAttribute('href', 'tea_platform/index.html'));
+        }
+
+        const aiMascotEntry = document.getElementById('aiMascotEntry');
+        const aiPage = document.getElementById('aiPage');
+        const aiPageClose = document.getElementById('aiPageClose');
+        const metaverseEntry = document.getElementById('metaverseEntry');
+        const metaversePage = document.getElementById('metaversePage');
+        const metaversePageClose = document.getElementById('metaversePageClose');
+        const aiAskBtn = document.getElementById('aiAskBtn');
+        const aiQuestionInput = document.getElementById('aiQuestionInput');
+        const aiChatLog = document.getElementById('aiChatLog');
+
+        let lastBodyOverflow = '';
+        function openOverlay(el) {
+            if (!el) return;
+            lastBodyOverflow = document.body.style.overflow || '';
+            document.body.style.overflow = 'hidden';
+            el.classList.add('is-open');
+            el.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeOverlay(el) {
+            if (!el) return;
+            el.classList.remove('is-open');
+            el.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = lastBodyOverflow;
+        }
+
+        function appendBubble(text, type) {
+            const div = document.createElement('div');
+            div.className = `ai-bubble ${type}`;
+            div.textContent = text;
+            aiChatLog.appendChild(div);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
+        }
+
+        function appendTyping() {
+            const div = document.createElement('div');
+            div.className = 'ai-bubble bot';
+            div.textContent = '茶小泽正在输入…';
+            aiChatLog.appendChild(div);
+            aiChatLog.scrollTop = aiChatLog.scrollHeight;
+            return div;
+        }
+
+        function matchFaqAnswer(q) {
+            const s = (q || '').toLowerCase();
+            if (s.includes('导览') || s.includes('路线') || s.includes('点位') || s.includes('天空之镜')) {
+                return '当然可以～我先给你一条轻松好逛的路线：游客中心→天空之镜→核心茶园采茶体验→非遗工坊→云雾茶吧，全程大约2-3小时。想看更直观的点位分布，点一下上面的“查看导览图”就能直接看大图啦！你更想走轻松打卡路线，还是深度体验路线？';
+            }
+            if (s.includes('预约') || s.includes('采茶') || s.includes('炒茶') || s.includes('研学')) {
+                return '安排～预约很简单：在首页“茶文旅”板块选项目（采茶/炒茶/研学）→选日期和人数→提交并支付预约金。成功后会短信提醒你，带着预约码到景区核销就行～';
+            }
+            if (s.includes('区别') || s.includes('普通绿茶') || s.includes('特色') || s.includes('七泡') || s.includes('晚来香')) {
+                return '这个我超会聊～安顶云雾茶是杭州十大名茶、明代贡茶，产自高山云雾小气候，内含物更足（比如水浸出物46%+、氨基酸4.1%+）；再加上杭州非遗手工炒制“三温三炒+十大手法”，所以茶汤更醇厚，才有“七泡有余香”“晚来香”的说法。';
+            }
+            if (s.includes('文创') || s.includes('周边') || s.includes('冰箱贴') || s.includes('茶宠') || s.includes('挂件')) {
+                return '有的有的～周边文创主打“茶小泽”系列：毛绒挂件、冰箱贴、茶宠摆件，还有定制茶具套装、茶园风景手账等。你可以在游客中心/非遗工坊线下买，也能线上选购，支持快递到家～';
+            }
+            if (s.includes('溯源') || s.includes('二维码') || s.includes('扫码') || s.includes('茶标')) {
+                return '没问题～每款产品包装上都有专属数字溯源码，微信扫码就能看；也可以登录平台“茶标自助机”查询，茶园、采摘时间、炒茶师傅、加工流程、品控检测等信息都能查到，安心喝茶～';
+            }
+            if (s.includes('就餐') || s.includes('吃饭') || s.includes('茶吧') || s.includes('农家乐') || s.includes('消费')) {
+                return '当然可以～景区里有云雾茶吧和合作农家乐：茶吧单杯大概20-50元，茶位费88元/位起；农家乐人均约60-100元，还能配茶点和茶叶特色菜品，挺舒服的～';
+            }
+            if (s.includes('团购') || s.includes('礼品') || s.includes('定制') || s.includes('包装') || s.includes('合作')) {
+                return '可以安排团购定制哟～礼盒支持印企业LOGO/祝福语，50盒起有批发价，200盒可免费配送；还可以搭配文创周边做成礼品套盒，更有仪式感。';
+            }
+            return '你可以先点开上面常见问题看看～也可以直接丢给我关键词（导览、预约、区别、文创、溯源、就餐、团购），我来给你快速回答！你更关心的是“怎么玩”“怎么买”还是“怎么预约”呀？';
+        }
+
+        const aiHistory = [];
+        function pushAiHistory(role, content) {
+            if (!content) return;
+            aiHistory.push({ role, content: String(content) });
+            if (aiHistory.length > 30) aiHistory.splice(0, aiHistory.length - 30);
+        }
+
+        async function requestAiAnswer(q) {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: q,
+                    history: aiHistory.slice(-10),
+                    page: 'shop',
+                })
+            });
+            if (!res.ok) throw new Error(`http ${res.status}`);
+            const data = await res.json();
+            if (data && typeof data.reply === 'string' && data.reply.trim()) return data.reply.trim();
+            if (data && typeof data.error === 'string' && data.error) throw new Error(data.error);
+            throw new Error('empty reply');
+        }
+
+        async function askAi() {
+            const q = aiQuestionInput.value.trim();
+            if (!q) return;
+            appendBubble(q, 'user');
+            pushAiHistory('user', q);
+            aiQuestionInput.value = '';
+            const typing = appendTyping();
+            try {
+                const a = await requestAiAnswer(q);
+                typing.remove();
+                appendBubble(a, 'bot');
+                pushAiHistory('assistant', a);
+            } catch (e) {
+                typing.remove();
+                const fallback = matchFaqAnswer(q);
+                if (String(e && e.message || '').includes('LLM_API_KEY')) {
+                    appendBubble(`我还没接入大模型（服务器未配置密钥），先按常见问题给你答：${fallback}`, 'bot');
+                    pushAiHistory('assistant', `我还没接入大模型（服务器未配置密钥），先按常见问题给你答：${fallback}`);
+                    return;
+                }
+                appendBubble(fallback, 'bot');
+                pushAiHistory('assistant', fallback);
+            }
+        }
+
+        if (aiMascotEntry) {
+            aiMascotEntry.addEventListener('click', function() {
+                openOverlay(aiPage);
+            });
+        }
+
+        if (aiPageClose) {
+            aiPageClose.addEventListener('click', function() {
+                closeOverlay(aiPage);
+            });
+        }
+
+        if (metaverseEntry) {
+            metaverseEntry.addEventListener('click', function() {
+                openOverlay(metaversePage);
+            });
+        }
+
+        if (metaversePageClose) {
+            metaversePageClose.addEventListener('click', function() {
+                closeOverlay(metaversePage);
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            if (aiPage && aiPage.classList.contains('is-open')) closeOverlay(aiPage);
+            if (metaversePage && metaversePage.classList.contains('is-open')) closeOverlay(metaversePage);
+        });
+
+        aiAskBtn.addEventListener('click', askAi);
+        aiQuestionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') askAi();
+        });
+
+        const aiQuickBtns = document.getElementById('aiQuickBtns');
+        if (aiQuickBtns) {
+            aiQuickBtns.addEventListener('click', function(e) {
+                const btn = e.target.closest('button[data-q]');
+                if (!btn) return;
+                const q = btn.getAttribute('data-q') || '';
+                if (!q) return;
+                aiQuestionInput.value = q;
+                askAi();
+            });
+        }
+
+        const tourBookingForm = document.getElementById('tourBookingForm');
+        const tourBookingResult = document.getElementById('tourBookingResult');
+        const tourCancelBtn = document.getElementById('tourCancelBtn');
+        tourBookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const project = document.getElementById('tourProject').value;
+            const date = document.getElementById('tourDate').value;
+            const people = document.getElementById('tourPeople').value;
+            tourBookingResult.textContent = `已提交预约：${project} · ${date} · ${people}人。请继续完成预约金支付以锁定名额。`;
+            tourBookingResult.classList.remove('d-none');
+            if (tourCancelBtn) tourCancelBtn.classList.remove('d-none');
+        });
+        if (tourCancelBtn) {
+            tourCancelBtn.addEventListener('click', function() {
+                if (tourBookingForm) tourBookingForm.reset();
+                if (tourBookingResult) {
+                    tourBookingResult.textContent = '';
+                    tourBookingResult.classList.add('d-none');
+                }
+                tourCancelBtn.classList.add('d-none');
+            });
+        }
+
+        const TEA_PRODUCTS = {
+            '手工·匠心': { basePrice500: 3000, specs: [{ key: '250', grams: 250, label: '250g' }, { key: '250x2', grams: 500, label: '250g×2（礼盒装）', price: 3000 }] },
+            '特选级': { specs: [{ key: '250', grams: 250, label: '250g', price: 950 }, { key: '250x2', grams: 500, label: '250g×2（礼盒装）', price: 1899 }] },
+            '精选级': { basePrice500: 1399, specs: [250, 500] },
+            '优选级': { basePrice500: 999, specs: [250, 500] },
+        };
+
+        function normalizeTeaSpec(raw) {
+            if (typeof raw === 'number') return { key: String(raw), grams: raw, label: `${raw}g` };
+            if (!raw || typeof raw !== 'object') return null;
+            const grams = Number.parseInt(String(raw.grams), 10);
+            if (!Number.isFinite(grams) || grams <= 0) return null;
+            const price = raw.price === undefined ? undefined : Number(raw.price);
+            return {
+                key: String(raw.key || `${grams}`),
+                grams,
+                label: String(raw.label || `${grams}g`),
+                price: Number.isFinite(price) ? Math.round(price) : undefined,
+            };
+        }
+
+        function calcTeaPriceBySpec(grade, spec) {
+            if (!spec) return 0;
+            if (typeof spec.price === 'number' && Number.isFinite(spec.price)) return Math.round(spec.price);
+            const product = TEA_PRODUCTS[grade];
+            if (!product) return 0;
+            const base = Number(product.basePrice500) || 0;
+            return Math.round(base * (spec.grams / 500));
+        }
+
+        function sanitizeInt(v, fallback) {
+            const n = Number.parseInt(String(v), 10);
+            if (!Number.isFinite(n)) return fallback;
+            return n;
+        }
+
+        function clampQty(v) {
+            const n = sanitizeInt(v, 1);
+            return Math.min(99, Math.max(1, n));
+        }
+
+        const preorderBatchSelect = document.getElementById('preorderBatch');
+        const preorderQtyInput = document.getElementById('preorderQty');
+        const preorderSpecInput = document.getElementById('preorderSpec');
+        const preorderModalEl = document.getElementById('preorderModal');
+        const preorderModalTitleEl = document.getElementById('preorderModalTitle');
+        const preorderModalSummaryEl = document.getElementById('preorderModalSummary');
+        const preorderSpecOptionsEl = document.getElementById('preorderSpecOptions');
+        const preorderModalQtyEl = document.getElementById('preorderModalQty');
+        const preorderQtyMinusEl = document.getElementById('preorderQtyMinus');
+        const preorderQtyPlusEl = document.getElementById('preorderQtyPlus');
+        const preorderModalConfirmEl = document.getElementById('preorderModalConfirm');
+
+        let preorderModalState = { grade: '', specKey: '' };
+        let preorderModalSpecs = [];
+
+        function updatePreorderModalSummary() {
+            const { grade, specKey } = preorderModalState;
+            if (!grade) {
+                preorderModalSummaryEl.textContent = '';
+                return;
+            }
+            const spec = preorderModalSpecs.find((s) => s.key === specKey) || preorderModalSpecs[0];
+            if (!spec) {
+                preorderModalSummaryEl.textContent = '';
+                return;
+            }
+            const unitPrice = calcTeaPriceBySpec(grade, spec);
+            const qty = clampQty((preorderModalQtyEl && preorderModalQtyEl.value) || 1);
+            const total = unitPrice * qty;
+            preorderModalSummaryEl.textContent = `已选：${grade} · ${spec.label} · 单价¥${unitPrice} · 数量${qty} · 合计¥${total}`;
+        }
+
+        function syncSpecSelected() {
+            const { specKey } = preorderModalState;
+            preorderSpecOptionsEl.querySelectorAll('.spec-option').forEach((el) => {
+                el.classList.toggle('is-selected', el.dataset.key === String(specKey));
+            });
+        }
+
+        function renderSpecOptions(grade) {
+            preorderSpecOptionsEl.innerHTML = '';
+            const product = TEA_PRODUCTS[grade];
+            const rawSpecs = product ? product.specs : [];
+            preorderModalSpecs = rawSpecs.map(normalizeTeaSpec).filter(Boolean);
+            if (!preorderModalSpecs.length) return;
+            const defaultSpec = preorderModalSpecs.find((s) => s.grams === 250) || preorderModalSpecs[0];
+            preorderModalState = { grade, specKey: defaultSpec.key };
+            preorderModalSpecs.forEach((spec) => {
+                const price = calcTeaPriceBySpec(grade, spec);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'spec-option';
+                btn.dataset.key = String(spec.key);
+                btn.innerHTML = `<div class="spec-option-title">${spec.label}</div><div class="spec-option-meta">¥${price}</div>`;
+                preorderSpecOptionsEl.appendChild(btn);
+            });
+            syncSpecSelected();
+            updatePreorderModalSummary();
+        }
+
+        function openPreorderModal(grade) {
+            if (!preorderModalEl) return;
+            preorderModalTitleEl.textContent = `${grade} · 预定`;
+            preorderModalQtyEl.value = '1';
+            renderSpecOptions(grade);
+            updatePreorderModalSummary();
+            const modal = bootstrap.Modal.getOrCreateInstance(preorderModalEl, { backdrop: true, focus: true });
+            modal.show();
+        }
+
+        if (preorderSpecOptionsEl) {
+            preorderSpecOptionsEl.addEventListener('click', function(e) {
+                const target = e.target.closest('.spec-option');
+                if (!target) return;
+                const key = String(target.dataset.key || '');
+                if (!key) return;
+                preorderModalState.specKey = key;
+                syncSpecSelected();
+                updatePreorderModalSummary();
+            });
+        }
+
+        if (preorderQtyMinusEl) {
+            preorderQtyMinusEl.addEventListener('click', function() {
+                preorderModalQtyEl.value = String(clampQty(sanitizeInt(preorderModalQtyEl.value, 1) - 1));
+                updatePreorderModalSummary();
+            });
+        }
+
+        if (preorderQtyPlusEl) {
+            preorderQtyPlusEl.addEventListener('click', function() {
+                preorderModalQtyEl.value = String(clampQty(sanitizeInt(preorderModalQtyEl.value, 1) + 1));
+                updatePreorderModalSummary();
+            });
+        }
+
+        if (preorderModalQtyEl) {
+            preorderModalQtyEl.addEventListener('input', function() {
+                const digits = preorderModalQtyEl.value.replace(/[^\d]/g, '');
+                preorderModalQtyEl.value = digits ? String(clampQty(digits)) : '';
+                if (preorderModalQtyEl.value) updatePreorderModalSummary();
+            });
+            preorderModalQtyEl.addEventListener('blur', function() {
+                preorderModalQtyEl.value = String(clampQty(preorderModalQtyEl.value || 1));
+                updatePreorderModalSummary();
+            });
+        }
+
+        if (preorderModalConfirmEl) {
+            preorderModalConfirmEl.addEventListener('click', function() {
+                const qty = clampQty(preorderModalQtyEl.value || 1);
+                preorderBatchSelect.value = preorderModalState.grade;
+                preorderQtyInput.value = String(qty);
+                const spec = preorderModalSpecs.find((s) => s.key === preorderModalState.specKey) || preorderModalSpecs[0];
+                preorderSpecInput.value = spec ? spec.label : '';
+                const modal = bootstrap.Modal.getInstance(preorderModalEl);
+                if (modal) modal.hide();
+                preorderQtyInput.focus();
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.preorder-btn');
+            if (!btn) return;
+            const grade = btn.getAttribute('data-grade') || '';
+            if (!grade) return;
+            openPreorderModal(grade);
+        });
+
+        const preorderForm = document.getElementById('preorderForm');
+        const preorderResult = document.getElementById('preorderResult');
+        preorderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const batch = document.getElementById('preorderBatch').value;
+            const qty = document.getElementById('preorderQty').value;
+            preorderResult.textContent = `✅ 预定已提交：${batch} · ${qty}盒。请联系客服确认【发货批次】与【支付方式】。`;
+            preorderResult.classList.remove('d-none');
+        });
+
+        const allProductsBtn = document.getElementById('allProductsBtn');
+        const allProductsModalEl = document.getElementById('allProductsModal');
+        const allProductsPreorderEl = document.getElementById('allProductsPreorder');
+        const allProductsMerchEl = document.getElementById('allProductsMerch');
+
+        const imagePreviewModalEl = document.getElementById('imagePreviewModal');
+        const imagePreviewViewportEl = document.getElementById('imagePreviewViewport');
+        const imagePreviewImgEl = document.getElementById('imagePreviewImg');
+        const imagePreviewTitleEl = document.getElementById('imagePreviewTitle');
+        const imagePreviewDownloadEl = document.getElementById('imagePreviewDownload');
+
+        const merchBuyModalEl = document.getElementById('merchBuyModal');
+        const merchBuyModalTitleEl = document.getElementById('merchBuyModalTitle');
+        const merchBuyModalSummaryEl = document.getElementById('merchBuyModalSummary');
+        const merchQtyMinusEl = document.getElementById('merchQtyMinus');
+        const merchQtyPlusEl = document.getElementById('merchQtyPlus');
+        const merchQtyInputEl = document.getElementById('merchQtyInput');
+        const merchAddToCartBtnEl = document.getElementById('merchAddToCartBtn');
+        const merchBuyNowBtnEl = document.getElementById('merchBuyNowBtn');
+        const merchBuyToastEl = document.getElementById('merchBuyToast');
+        const merchBuyToastBodyEl = document.getElementById('merchBuyToastBody');
+
+        let merchBuyState = { name: '', price: 0 };
+
+        const cartBtn = document.getElementById('cartBtn');
+        const cartBadge = document.getElementById('cartBadge');
+        const cartModalEl = document.getElementById('cartModal');
+        const cartItemsEl = document.getElementById('cartItems');
+        const cartTotalEl = document.getElementById('cartTotal');
+        const cartClearBtnEl = document.getElementById('cartClearBtn');
+        const checkoutNameEl = document.getElementById('checkoutName');
+        const checkoutPhoneEl = document.getElementById('checkoutPhone');
+        const checkoutAddressEl = document.getElementById('checkoutAddress');
+        const checkoutNoteEl = document.getElementById('checkoutNote');
+        const checkoutSubmitBtnEl = document.getElementById('checkoutSubmitBtn');
+        const CART_KEY = 'tea_platform_cart_v1';
+
+        function fillAllProductsModal() {
+            if (!allProductsPreorderEl || !allProductsMerchEl) return;
+            allProductsPreorderEl.innerHTML = '';
+            allProductsMerchEl.innerHTML = '';
+
+            document.querySelectorAll('#pane-preorder .row.g-3 > .col-md-6').forEach((col) => {
+                allProductsPreorderEl.appendChild(col.cloneNode(true));
+            });
+
+            document.querySelectorAll('#pane-merch .row.g-4 > .col-lg-3').forEach((col) => {
+                allProductsMerchEl.appendChild(col.cloneNode(true));
+            });
+        }
+
+        if (allProductsBtn && allProductsModalEl) {
+            allProductsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                fillAllProductsModal();
+                const modal = bootstrap.Modal.getOrCreateInstance(allProductsModalEl, { backdrop: true, focus: true });
+                modal.show();
+            });
+        }
+
+        const imagePreviewState = {
+            scale: 1,
+            x: 0,
+            y: 0,
+            activePointers: new Map(),
+            draggingId: null,
+            draggingStartX: 0,
+            draggingStartY: 0,
+            pinchStartDist: 0,
+            pinchStartScale: 1,
+            pinchStartX: 0,
+            pinchStartY: 0,
+            pinchCenterX: 0,
+            pinchCenterY: 0,
+        };
+
+        function clampScale(v) {
+            return Math.min(4, Math.max(1, v));
+        }
+
+        function applyImagePreviewTransform() {
+            if (!imagePreviewImgEl) return;
+            imagePreviewImgEl.style.transform = `translate3d(${imagePreviewState.x}px, ${imagePreviewState.y}px, 0) scale(${imagePreviewState.scale})`;
+        }
+
+        function resetImagePreviewTransform() {
+            imagePreviewState.scale = 1;
+            imagePreviewState.x = 0;
+            imagePreviewState.y = 0;
+            imagePreviewState.activePointers.clear();
+            imagePreviewState.draggingId = null;
+            applyImagePreviewTransform();
+        }
+
+        function zoomAround(centerX, centerY, nextScale) {
+            const prevScale = imagePreviewState.scale;
+            const scale = clampScale(nextScale);
+            if (scale === prevScale) return;
+            const ratio = scale / prevScale;
+            imagePreviewState.x = imagePreviewState.x * ratio + centerX * (1 - ratio);
+            imagePreviewState.y = imagePreviewState.y * ratio + centerY * (1 - ratio);
+            imagePreviewState.scale = scale;
+            applyImagePreviewTransform();
+        }
+
+        function openImagePreview(src, title) {
+            if (!imagePreviewModalEl || !imagePreviewImgEl) return;
+            imagePreviewImgEl.src = src;
+            imagePreviewImgEl.alt = title || '查看大图';
+            if (imagePreviewTitleEl) imagePreviewTitleEl.textContent = title || '查看大图';
+            if (imagePreviewDownloadEl) {
+                imagePreviewDownloadEl.href = src || '#';
+                const filename = (src || '').split('/').pop() || 'image';
+                imagePreviewDownloadEl.setAttribute('download', filename);
+            }
+            resetImagePreviewTransform();
+            const modal = bootstrap.Modal.getOrCreateInstance(imagePreviewModalEl, { backdrop: true, focus: true });
+            modal.show();
+        }
+
+        function loadCart() {
+            try {
+                const raw = localStorage.getItem(CART_KEY);
+                const data = raw ? JSON.parse(raw) : [];
+                return Array.isArray(data) ? data : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveCart(items) {
+            localStorage.setItem(CART_KEY, JSON.stringify(items || []));
+        }
+
+        function upsertCartItem(name, price, qty) {
+            const items = loadCart();
+            const key = String(name || '').trim();
+            const p = sanitizeInt(price, 0);
+            const q = clampQty(qty || 1);
+            if (!key) return items;
+            const idx = items.findIndex((it) => it && it.name === key);
+            if (idx >= 0) {
+                const nextQty = clampQty(sanitizeInt(items[idx].qty, 1) + q);
+                items[idx] = { name: key, price: p, qty: nextQty };
+            } else {
+                items.push({ name: key, price: p, qty: q });
+            }
+            saveCart(items);
+            return items;
+        }
+
+        function calcCartCount(items) {
+            return (items || []).reduce((sum, it) => sum + clampQty((it && it.qty) || 1), 0);
+        }
+
+        function calcCartTotal(items) {
+            return (items || []).reduce((sum, it) => sum + sanitizeInt((it && it.price) || 0, 0) * clampQty((it && it.qty) || 1), 0);
+        }
+
+        function updateCartBadge() {
+            const items = loadCart();
+            if (cartBadge) cartBadge.textContent = String(calcCartCount(items));
+        }
+
+        function renderCart() {
+            if (!cartItemsEl || !cartTotalEl) return;
+            const items = loadCart();
+            if (!items.length) {
+                cartItemsEl.innerHTML = '<div class="text-muted">购物车还是空的～去挑点文创周边吧！</div>';
+                cartTotalEl.textContent = '¥0';
+                updateCartBadge();
+                return;
+            }
+
+            cartItemsEl.innerHTML = items.map((it, idx) => {
+                const name = String((it && it.name) || '');
+                const price = sanitizeInt((it && it.price) || 0, 0);
+                const qty = clampQty((it && it.qty) || 1);
+                const sub = price * qty;
+                return `
+                    <div class="border rounded p-3 mb-2" data-idx="${idx}">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">${name}</div>
+                                <div class="text-muted small">单价：¥${price}</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill cart-remove-btn">删除</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div class="input-group qty-stepper" style="max-width: 220px;">
+                                <button class="btn btn-outline-secondary cart-qty-minus" type="button">-</button>
+                                <input type="text" class="form-control cart-qty-input" value="${qty}" inputmode="numeric" aria-label="数量">
+                                <button class="btn btn-outline-secondary cart-qty-plus" type="button">+</button>
+                            </div>
+                            <div class="fw-bold">小计：<span class="text-success">¥${sub}</span></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            cartTotalEl.textContent = `¥${calcCartTotal(items)}`;
+            updateCartBadge();
+        }
+
+        function openCartModal() {
+            if (!cartModalEl) return;
+            renderCart();
+            const modal = bootstrap.Modal.getOrCreateInstance(cartModalEl, { backdrop: true, focus: true });
+            modal.show();
+        }
+
+        function updateMerchBuyModalSummary() {
+            const qty = clampQty((merchQtyInputEl && merchQtyInputEl.value) || 1);
+            const unit = sanitizeInt(merchBuyState.price, 0);
+            const total = unit * qty;
+            if (merchBuyModalSummaryEl) merchBuyModalSummaryEl.textContent = unit ? `单价¥${unit} · 数量${qty} · 合计¥${total}` : '';
+        }
+
+        function openMerchBuyModal(name, price) {
+            if (!merchBuyModalEl) return;
+            merchBuyState = { name: name || '文创周边', price: sanitizeInt(price, 0) };
+            if (merchBuyModalTitleEl) merchBuyModalTitleEl.textContent = `购买 · ${merchBuyState.name}`;
+            if (merchQtyInputEl) merchQtyInputEl.value = '1';
+            updateMerchBuyModalSummary();
+            const modal = bootstrap.Modal.getOrCreateInstance(merchBuyModalEl, { backdrop: true, focus: true });
+            modal.show();
+        }
+
+        if (merchQtyMinusEl) {
+            merchQtyMinusEl.addEventListener('click', function() {
+                if (!merchQtyInputEl) return;
+                merchQtyInputEl.value = String(clampQty(sanitizeInt(merchQtyInputEl.value, 1) - 1));
+                updateMerchBuyModalSummary();
+            });
+        }
+
+        if (merchQtyPlusEl) {
+            merchQtyPlusEl.addEventListener('click', function() {
+                if (!merchQtyInputEl) return;
+                merchQtyInputEl.value = String(clampQty(sanitizeInt(merchQtyInputEl.value, 1) + 1));
+                updateMerchBuyModalSummary();
+            });
+        }
+
+        if (merchQtyInputEl) {
+            merchQtyInputEl.addEventListener('input', function() {
+                const digits = merchQtyInputEl.value.replace(/[^\d]/g, '');
+                merchQtyInputEl.value = digits ? String(clampQty(digits)) : '';
+                if (merchQtyInputEl.value) updateMerchBuyModalSummary();
+            });
+            merchQtyInputEl.addEventListener('blur', function() {
+                merchQtyInputEl.value = String(clampQty(merchQtyInputEl.value || 1));
+                updateMerchBuyModalSummary();
+            });
+        }
+
+        if (merchAddToCartBtnEl) {
+            merchAddToCartBtnEl.addEventListener('click', function() {
+                const qty = clampQty((merchQtyInputEl && merchQtyInputEl.value) || 1);
+                upsertCartItem(merchBuyState.name, merchBuyState.price, qty);
+                updateCartBadge();
+                if (merchBuyToastBodyEl) merchBuyToastBodyEl.textContent = `已加入购物车：${merchBuyState.name} × ${qty}`;
+                if (merchBuyToastEl) bootstrap.Toast.getOrCreateInstance(merchBuyToastEl, { delay: 2400 }).show();
+                const modal = bootstrap.Modal.getInstance(merchBuyModalEl);
+                if (modal) modal.hide();
+            });
+        }
+
+        if (merchBuyNowBtnEl) {
+            merchBuyNowBtnEl.addEventListener('click', function() {
+                const qty = clampQty((merchQtyInputEl && merchQtyInputEl.value) || 1);
+                upsertCartItem(merchBuyState.name, merchBuyState.price, qty);
+                updateCartBadge();
+                const modal = bootstrap.Modal.getInstance(merchBuyModalEl);
+                if (modal) modal.hide();
+                openCartModal();
+            });
+        }
+
+        if (cartBtn) {
+            cartBtn.addEventListener('click', function() {
+                openCartModal();
+            });
+        }
+
+        if (cartClearBtnEl) {
+            cartClearBtnEl.addEventListener('click', function() {
+                saveCart([]);
+                renderCart();
+                if (merchBuyToastBodyEl) merchBuyToastBodyEl.textContent = '购物车已清空';
+                if (merchBuyToastEl) bootstrap.Toast.getOrCreateInstance(merchBuyToastEl, { delay: 2000 }).show();
+            });
+        }
+
+        if (cartItemsEl) {
+            cartItemsEl.addEventListener('click', function(e) {
+                const card = e.target.closest('[data-idx]');
+                if (!card) return;
+                const idx = sanitizeInt(card.getAttribute('data-idx'), -1);
+                if (idx < 0) return;
+                const items = loadCart();
+                const it = items[idx];
+                if (!it) return;
+
+                if (e.target.closest('.cart-remove-btn')) {
+                    items.splice(idx, 1);
+                    saveCart(items);
+                    renderCart();
+                    return;
+                }
+
+                if (e.target.closest('.cart-qty-minus')) {
+                    it.qty = clampQty(sanitizeInt(it.qty, 1) - 1);
+                    saveCart(items);
+                    renderCart();
+                    return;
+                }
+
+                if (e.target.closest('.cart-qty-plus')) {
+                    it.qty = clampQty(sanitizeInt(it.qty, 1) + 1);
+                    saveCart(items);
+                    renderCart();
+                }
+            });
+
+            cartItemsEl.addEventListener('input', function(e) {
+                const input = e.target.closest('.cart-qty-input');
+                if (!input) return;
+                const card = e.target.closest('[data-idx]');
+                if (!card) return;
+                const idx = sanitizeInt(card.getAttribute('data-idx'), -1);
+                if (idx < 0) return;
+                const digits = input.value.replace(/[^\d]/g, '');
+                input.value = digits ? String(clampQty(digits)) : '';
+                const items = loadCart();
+                if (!items[idx]) return;
+                items[idx].qty = input.value ? clampQty(input.value) : 1;
+                saveCart(items);
+                renderCart();
+            });
+        }
+
+        if (checkoutSubmitBtnEl) {
+            checkoutSubmitBtnEl.addEventListener('click', function() {
+                const items = loadCart();
+                if (!items.length) {
+                    if (merchBuyToastBodyEl) merchBuyToastBodyEl.textContent = '购物车为空，先去挑选商品吧～';
+                    if (merchBuyToastEl) bootstrap.Toast.getOrCreateInstance(merchBuyToastEl, { delay: 2200 }).show();
+                    return;
+                }
+                const name = (checkoutNameEl && checkoutNameEl.value || '').trim();
+                const phone = (checkoutPhoneEl && checkoutPhoneEl.value || '').trim();
+                const addr = (checkoutAddressEl && checkoutAddressEl.value || '').trim();
+                if (!name || !phone || !addr) {
+                    if (merchBuyToastBodyEl) merchBuyToastBodyEl.textContent = '请先填写收货人、电话和地址再提交～';
+                    if (merchBuyToastEl) bootstrap.Toast.getOrCreateInstance(merchBuyToastEl, { delay: 2400 }).show();
+                    return;
+                }
+                const total = calcCartTotal(items);
+                if (merchBuyToastBodyEl) merchBuyToastBodyEl.textContent = `✅ 订单已提交：共${calcCartCount(items)}件，合计¥${total}。客服将确认【发货批次】与【支付方式】。`;
+                if (merchBuyToastEl) bootstrap.Toast.getOrCreateInstance(merchBuyToastEl, { delay: 3200 }).show();
+                saveCart([]);
+                renderCart();
+                const modal = bootstrap.Modal.getInstance(cartModalEl);
+                if (modal) modal.hide();
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const img = e.target.closest('img.preorder-view-img');
+            if (!img) return;
+            openImagePreview(img.getAttribute('src') || '', img.getAttribute('alt') || '');
+        });
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.guide-map-btn');
+            if (!btn) return;
+            openImagePreview(btn.getAttribute('data-src') || '', btn.getAttribute('data-title') || '');
+        });
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.merch-buy-btn');
+            if (!btn) return;
+            openMerchBuyModal(btn.getAttribute('data-name') || '', btn.getAttribute('data-price') || 0);
+        });
+
+        if (imagePreviewViewportEl) {
+            imagePreviewViewportEl.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                const rect = imagePreviewViewportEl.getBoundingClientRect();
+                const cx = e.clientX - rect.left;
+                const cy = e.clientY - rect.top;
+                const step = e.deltaY > 0 ? 0.92 : 1.08;
+                zoomAround(cx, cy, imagePreviewState.scale * step);
+            }, { passive: false });
+
+            imagePreviewViewportEl.addEventListener('pointerdown', function(e) {
+                imagePreviewViewportEl.setPointerCapture(e.pointerId);
+                imagePreviewState.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                if (imagePreviewState.activePointers.size === 1) {
+                    imagePreviewState.draggingId = e.pointerId;
+                    imagePreviewState.draggingStartX = e.clientX - imagePreviewState.x;
+                    imagePreviewState.draggingStartY = e.clientY - imagePreviewState.y;
+                }
+
+                if (imagePreviewState.activePointers.size === 2) {
+                    const pts = Array.from(imagePreviewState.activePointers.values());
+                    const dx = pts[0].x - pts[1].x;
+                    const dy = pts[0].y - pts[1].y;
+                    imagePreviewState.pinchStartDist = Math.hypot(dx, dy) || 1;
+                    imagePreviewState.pinchStartScale = imagePreviewState.scale;
+                    imagePreviewState.pinchStartX = imagePreviewState.x;
+                    imagePreviewState.pinchStartY = imagePreviewState.y;
+                    const rect = imagePreviewViewportEl.getBoundingClientRect();
+                    imagePreviewState.pinchCenterX = (pts[0].x + pts[1].x) / 2 - rect.left;
+                    imagePreviewState.pinchCenterY = (pts[0].y + pts[1].y) / 2 - rect.top;
+                    imagePreviewState.draggingId = null;
+                }
+            });
+
+            imagePreviewViewportEl.addEventListener('pointermove', function(e) {
+                if (!imagePreviewState.activePointers.has(e.pointerId)) return;
+                imagePreviewState.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                if (imagePreviewState.activePointers.size === 2) {
+                    const pts = Array.from(imagePreviewState.activePointers.values());
+                    const dx = pts[0].x - pts[1].x;
+                    const dy = pts[0].y - pts[1].y;
+                    const dist = Math.hypot(dx, dy) || 1;
+                    const nextScale = imagePreviewState.pinchStartScale * (dist / imagePreviewState.pinchStartDist);
+                    const scale = clampScale(nextScale);
+                    const ratio = scale / imagePreviewState.pinchStartScale;
+                    imagePreviewState.scale = scale;
+                    imagePreviewState.x = imagePreviewState.pinchStartX * ratio + imagePreviewState.pinchCenterX * (1 - ratio);
+                    imagePreviewState.y = imagePreviewState.pinchStartY * ratio + imagePreviewState.pinchCenterY * (1 - ratio);
+                    applyImagePreviewTransform();
+                    return;
+                }
+
+                if (imagePreviewState.draggingId !== e.pointerId) return;
+                imagePreviewState.x = e.clientX - imagePreviewState.draggingStartX;
+                imagePreviewState.y = e.clientY - imagePreviewState.draggingStartY;
+                applyImagePreviewTransform();
+            });
+
+            function endPointer(e) {
+                if (!imagePreviewState.activePointers.has(e.pointerId)) return;
+                imagePreviewState.activePointers.delete(e.pointerId);
+                if (imagePreviewState.draggingId === e.pointerId) imagePreviewState.draggingId = null;
+                if (imagePreviewState.activePointers.size === 1) {
+                    const id = Array.from(imagePreviewState.activePointers.keys())[0];
+                    imagePreviewState.draggingId = id;
+                }
+            }
+
+            imagePreviewViewportEl.addEventListener('pointerup', endPointer);
+            imagePreviewViewportEl.addEventListener('pointercancel', endPointer);
+            imagePreviewViewportEl.addEventListener('dblclick', function() {
+                resetImagePreviewTransform();
+            });
+        }
+
+        const mainNavLinks = Array.from(document.querySelectorAll('.navbar .navbar-nav .nav-link'));
+        const mainSections = ['culture', 'industry', 'tech', 'service', 'carbon', 'market']
+            .map(function(id) { return document.getElementById(id); })
+            .filter(Boolean);
+        const navbarEl = document.querySelector('.navbar');
+
+        function setMainNavActive(targetLink) {
+            mainNavLinks.forEach(function(link) {
+                link.classList.toggle('active', link === targetLink);
+            });
+        }
+
+        function findMainNavLinkByHash(hash) {
+            const normalized = String(hash || '').trim();
+            if (!normalized || normalized === '#') return mainNavLinks[0] || null;
+            return mainNavLinks.find(function(link) {
+                return link.getAttribute('href') === normalized;
+            }) || null;
+        }
+
+        function closeMainNavCollapseIfNeeded() {
+            const collapseEl = document.getElementById('navbarNav');
+            if (!collapseEl || !collapseEl.classList.contains('show')) return;
+            if (typeof bootstrap === 'undefined' || !bootstrap.Collapse) return;
+            bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
+        }
+
+        function smoothScrollToTarget(hash) {
+            const normalized = String(hash || '').trim();
+            if (!normalized || normalized === '#') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                history.pushState(null, '', window.location.pathname + window.location.search);
+                return;
+            }
+            const id = normalized.slice(1);
+            const el = document.getElementById(id);
+            if (!el) return;
+            const offset = (navbarEl ? navbarEl.getBoundingClientRect().height : 0) + 14;
+            const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+            window.scrollTo({ top, behavior: 'smooth' });
+            history.pushState(null, '', normalized);
+        }
+
+        let mainNavRaf = 0;
+        function updateMainNavByScroll() {
+            if (mainNavRaf) return;
+            mainNavRaf = window.requestAnimationFrame(function() {
+                mainNavRaf = 0;
+                const offset = (navbarEl ? navbarEl.getBoundingClientRect().height : 0) + 40;
+                const y = window.scrollY + offset;
+                let activeSectionId = '';
+                for (let i = 0; i < mainSections.length; i++) {
+                    const sec = mainSections[i];
+                    if (sec.offsetTop <= y) activeSectionId = sec.id;
+                }
+                if (!activeSectionId) {
+                    setMainNavActive(mainNavLinks[0] || null);
+                    return;
+                }
+                const link = findMainNavLinkByHash('#' + activeSectionId);
+                if (link) setMainNavActive(link);
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('.navbar .navbar-nav .nav-link');
+            if (!link) return;
+            const href = link.getAttribute('href') || '';
+            if (!href.startsWith('#')) return;
+            e.preventDefault();
+            setMainNavActive(link);
+            closeMainNavCollapseIfNeeded();
+            smoothScrollToTarget(href);
+        });
+
+        window.addEventListener('scroll', updateMainNavByScroll, { passive: true });
+        window.addEventListener('resize', updateMainNavByScroll);
+        const initialLink = findMainNavLinkByHash(window.location.hash);
+        if (initialLink) setMainNavActive(initialLink);
+        updateMainNavByScroll();
+
+        updateCartBadge();
+    </script>
+</body>
+</html>
